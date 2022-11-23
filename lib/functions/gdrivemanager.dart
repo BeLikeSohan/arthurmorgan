@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:desktop_experiments/global_data.dart';
+import 'package:desktop_experiments/models/gfile.dart';
 import 'package:googleapis/drive/v3.dart' as drive;
 import 'package:oauth2/oauth2.dart';
 
@@ -13,12 +14,18 @@ class GDriveManager {
     driveApi = drive.DriveApi(client);
   }
 
-  void getFiles() async {
-    var files = await driveApi.files.list();
-    for (var item in files.files!) {
-      log(item.name.toString());
-      log(item.id.toString());
+  Future<List<GFile>> getFiles() async {
+    log(folderID!);
+    var data = await driveApi.files.list(
+      q: "'$folderID' in parents",
+      $fields: "files(id, name)",
+    );
+
+    List<GFile> files = [];
+    for (var item in data.files!) {
+      files.add(GFile(item.name!, item.id!));
     }
+    return files;
   }
 
   Future<bool> checkIfNewUser() async {
@@ -37,7 +44,7 @@ class GDriveManager {
     folderID = folderId;
 
     var data = await driveApi.files.list(
-      q: "'$folderId' in parents",
+      q: "'$folderID' in parents",
       $fields: "files(id, name)",
     );
     return data.files!.isEmpty;
@@ -51,9 +58,9 @@ class GDriveManager {
 
       final Stream<List<int>> mediaStream =
           Future.value([104, 105]).asStream().asBroadcastStream();
-      var media = new drive.Media(mediaStream, 2);
-      var driveFile = new drive.File();
-      driveFile.name = "hello_world.txt";
+      var media = drive.Media(mediaStream, 2);
+      var driveFile = drive.File();
+      driveFile.name = "arthurmorgan";
       driveFile.parents = [folder.id!];
       final result = await driveApi.files.create(driveFile, uploadMedia: media);
       print("Upload result: $result");

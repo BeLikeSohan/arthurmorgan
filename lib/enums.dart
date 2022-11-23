@@ -3,3 +3,5 @@ enum InterfaceBrightness {
   dark,
   auto,
 }
+
+enum UserState { initiated, noninitiated, undetermined }

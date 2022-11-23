@@ -294,6 +294,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "4.1.0"
+  responsive_grid:
+    dependency: "direct main"
+    description:
+      name: responsive_grid
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.1.0"
   scroll_pos:
     dependency: transitive
     description:

@@ -1,6 +1,7 @@
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:desktop_experiments/pages/mainpage/homepage.dart';
 import 'package:desktop_experiments/providers/auth_provider.dart';
+import 'package:desktop_experiments/providers/fileinfosheet_provider.dart';
 import 'package:desktop_experiments/providers/gdrive_provider.dart';
 import 'package:desktop_experiments/windowtitlebar.dart';
 import 'package:fluent_ui/fluent_ui.dart';
@@ -14,10 +15,10 @@ void main() async {
 
   doWhenWindowReady(() {
     final win = appWindow;
-    const initialSize = Size(700, 500);
+    const initialSize = Size(1280, 720);
     win.minSize = initialSize;
     win.size = initialSize;
-    win.alignment = Alignment.center;
+    win.alignment = Alignment.centerRight;
     win.title = "Custom window with Flutter";
     win.show();
   });
@@ -34,6 +35,9 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider.value(
           value: GDriveProvider(),
+        ),
+        ChangeNotifierProvider.value(
+          value: FileInfoSheetProvider(),
         ),
       ],
       child: FluentApp(

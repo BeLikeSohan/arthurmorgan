@@ -47,6 +47,10 @@ dependencies:
   googleapis: ^9.2.0
   shared_preferences: ^2.0.15
   responsive_grid: ^2.1.0
+  file_picker: ^5.2.2
+  file_cryptor: ^0.0.3
+  encrypt: ^5.0.1
+  modal_side_sheet: ^0.0.1
 
 dev_dependencies:
   flutter_test:

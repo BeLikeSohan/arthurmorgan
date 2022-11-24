@@ -1,6 +1,7 @@
 class GFile {
-  String name;
   String id;
-
-  GFile(this.name, this.id);
+  String name;
+  int size;
+  DateTime createdTime;
+  GFile(this.id, this.name, this.size, this.createdTime);
 }

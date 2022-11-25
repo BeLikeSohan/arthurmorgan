@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:desktop_experiments/enums.dart';
+import 'package:desktop_experiments/functions/filehandler.dart';
 import 'package:desktop_experiments/global_data.dart';
 import 'package:desktop_experiments/models/gfile.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +10,8 @@ class GDriveProvider extends ChangeNotifier {
   List<GFile>? files;
   bool fileListFetched = false;
   UserState userState = UserState.undetermined;
+  bool isLoggedIn =
+      false; // THIS isLoggedIn is not google login, the internal login method using verify file
 
   void getFileList() async {
     files = await GlobalData.gDriveManager!.getFiles();
@@ -26,6 +29,44 @@ class GDriveProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void setupArthurMorgan(String password) async {
+    var verifyString = FileHandler.createVerifyString(password);
+    var result =
+        await GlobalData.gDriveManager!.setupArthurMorgan(verifyString);
+    if (result) {
+      userState = UserState.initiated;
+    } else {
+      log("error");
+    }
+    notifyListeners();
+  }
+
+  void login(String password) async {
+    var verifyFileMedia = await GlobalData.gDriveManager!.getVerifyFile();
+
+    List<int> verifyFileBytes = [];
+
+    verifyFileMedia.stream.listen((data) {
+      verifyFileBytes.insertAll(verifyFileBytes.length, data);
+    }, onDone: () {
+      log("Verify DL Done");
+      log(String.fromCharCodes(verifyFileBytes));
+      var result = FileHandler.checkPassword(
+          password, String.fromCharCodes(verifyFileBytes));
+      if (result) {
+        FileHandler.init(password);
+        isLoggedIn = true;
+        notifyListeners();
+      } else {
+        isLoggedIn = false; // why not
+        notifyListeners();
+      }
+    }, onError: (error) {
+      log("Verify DL Some Error");
+      notifyListeners();
+    });
+  }
+
   get getFiles {
     return files;
   }
@@ -36,5 +77,9 @@ class GDriveProvider extends ChangeNotifier {
 
   get getUserState {
     return userState;
+  }
+
+  get getIsLoggedIn {
+    return isLoggedIn;
   }
 }

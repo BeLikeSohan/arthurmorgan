@@ -25,6 +25,7 @@ class GDriveManager {
 
     List<GFile> files = [];
     for (var item in data.files!) {
+      if (item.name == "arthurmorgan") continue;
       var gfile = await FileHandler.decryptGfile(GFile(
           item.id!, item.name!, int.parse(item.size!), item.createdTime!));
       files.add(gfile);
@@ -54,24 +55,44 @@ class GDriveManager {
     return data.files!.isEmpty;
   }
 
-  Future<bool> setupArthurMorgan() async {
+  Future<bool> setupArthurMorgan(String verifyString) async {
     try {
       var folder = await driveApi.files.create(drive.File()
         ..name = "ArthurMorgan"
         ..mimeType = 'application/vnd.google-apps.folder');
 
       final Stream<List<int>> mediaStream =
-          Future.value([104, 105]).asStream().asBroadcastStream();
-      var media = drive.Media(mediaStream, 2);
+          Future.value(verifyString.codeUnits).asStream().asBroadcastStream();
+      var media = drive.Media(mediaStream, verifyString.length);
       var driveFile = drive.File();
       driveFile.name = "arthurmorgan";
       driveFile.parents = [folder.id!];
       final result = await driveApi.files.create(driveFile, uploadMedia: media);
-      print("Upload result: $result");
+      log("Upload result: $result");
+      checkIfNewUser(); // calling this here to update the folderId, not good
       return true;
     } catch (e) {
+      log(e.toString());
       return false;
     }
+  }
+
+  Future<drive.Media> getVerifyFile() async {
+    var data = await driveApi.files.list(
+      q: "'$folderID' in parents",
+      $fields: "files(id, name)",
+    );
+
+    String? verifyFileId;
+
+    for (var item in data.files!) {
+      if (item.name == "arthurmorgan") verifyFileId = item.id;
+    }
+
+    drive.Media verifyFileMedia = await driveApi.files.get(verifyFileId!,
+        downloadOptions: drive.DownloadOptions.fullMedia) as drive.Media;
+
+    return verifyFileMedia;
   }
 
   Future<bool> uploadFile(
@@ -88,18 +109,9 @@ class GDriveManager {
     return true;
   }
 
-  Future<String> downloadFile(GFile gfile) async {
-    drive.Media file = await driveApi.files.get(gfile.id,
+  Future<Stream> downloadFile(GFile gfile) async {
+    drive.Media media = await driveApi.files.get(gfile.id,
         downloadOptions: drive.DownloadOptions.fullMedia) as drive.Media;
-
-    List<int> dataStore = [];
-    file.stream.listen((data) {
-      dataStore.insertAll(dataStore.length, data);
-    }, onDone: () {
-      return "ok";
-      print("DL Done");
-    }, onError: (error) {
-      print("Some Error");
-    });
+    return media.stream;
   }
 }

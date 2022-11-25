@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:desktop_experiments/models/encrypted_file.dart';
 import 'package:desktop_experiments/models/gfile.dart';
+import 'package:desktop_experiments/utils.dart';
 import 'package:file_cryptor/file_cryptor.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
@@ -15,6 +16,44 @@ import 'package:encrypt/encrypt.dart' as encrypt;
 import 'dart:convert';
 
 class FileHandler {
+  static FileCryptor? fileCryptor;
+  static encrypt.Encrypter? encrypter;
+  static encrypt.Key? key;
+  static encrypt.IV? iv;
+
+  static void init(String password) {
+    fileCryptor = FileCryptor(
+      key: Utils.padPassToKey(password),
+      iv: 16,
+      dir: "example",
+    );
+
+    key = encrypt.Key.fromUtf8(Utils.padPassToKey(password));
+    iv = encrypt.IV.fromLength(16);
+
+    encrypter = encrypt.Encrypter(encrypt.AES(key!, mode: encrypt.AESMode.cbc));
+  }
+
+  static bool checkPassword(String password, String verify) {
+    final key = encrypt.Key.fromUtf8(Utils.padPassToKey(password));
+    final iv = encrypt.IV.fromLength(16);
+
+    final encrypter =
+        encrypt.Encrypter(encrypt.AES(key, mode: encrypt.AESMode.cbc));
+
+    return encrypter.encrypt("ArthutMorgan", iv: iv).base64 == verify;
+  }
+
+  static String createVerifyString(String password) {
+    final key = encrypt.Key.fromUtf8(Utils.padPassToKey(password));
+    final iv = encrypt.IV.fromLength(16);
+
+    final encrypter =
+        encrypt.Encrypter(encrypt.AES(key, mode: encrypt.AESMode.cbc));
+
+    return encrypter.encrypt("ArthutMorgan", iv: iv).base64;
+  }
+
   static Future<File?> getFile() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles();
 
@@ -33,21 +72,9 @@ class FileHandler {
     return file.openRead();
   }
 
-  static Future<EncryptedFile> encryptFile(File file, String password) async {
-    FileCryptor fileCryptor = FileCryptor(
-      key: "Your 32 bit key.................",
-      iv: 16,
-      dir: "example",
-    );
-
-    final key = encrypt.Key.fromUtf8("Your 32 bit key.................");
-    final iv = encrypt.IV.fromLength(16);
-
-    final encrypter =
-        encrypt.Encrypter(encrypt.AES(key, mode: encrypt.AESMode.cbc));
-
+  static Future<EncryptedFile> encryptFile(File file) async {
     final encryptedFileName =
-        encrypter.encrypt(file.path.split("\\").last, iv: iv);
+        encrypter!.encrypt(file.path.split("\\").last, iv: iv);
 
     // String encryptedFileName = String.fromCharCodes(
     //     fileCryptor.encryptUint8List(
@@ -57,23 +84,24 @@ class FileHandler {
     //             .codeUnits))); // what in the name of fuck is this?
 
     //String fileName = file.path.split("\\").last;
-    File encryptedFile = await fileCryptor.encrypt(inputFile: file.path);
+    File encryptedFile = await fileCryptor!.encrypt(inputFile: file.path);
 
     return EncryptedFile(encryptedFileName.base64, encryptedFile.lengthSync(),
         encryptedFile); // TODO: not sure if using base64 as filename is a good idea. need to find some algorithm which gives small enough output to use as filename;
   }
 
   static Future<GFile> decryptGfile(GFile gfile) async {
-    log(gfile.name);
-    final key = encrypt.Key.fromUtf8("Your 32 bit key.................");
-    final iv = encrypt.IV.fromLength(16);
-
-    final encrypter =
-        encrypt.Encrypter(encrypt.AES(key, mode: encrypt.AESMode.cbc));
-
-    var decryptedGfile = GFile(gfile.id,
-        encrypter.decrypt64(gfile.name, iv: iv), gfile.size, gfile.createdTime);
+    var decryptedGfile = GFile(
+        gfile.id,
+        encrypter!.decrypt64(gfile.name, iv: iv),
+        gfile.size,
+        gfile.createdTime);
     log(decryptedGfile.name);
     return decryptedGfile;
+  }
+
+  static Uint8List decryptUintList(Uint8List bytes) {
+    var decryptedBytes = fileCryptor!.decryptUint8List(data: bytes);
+    return decryptedBytes;
   }
 }

@@ -48,6 +48,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   void setupArthurMorganDialog(BuildContext context) {
+    TextEditingController passwordController = TextEditingController();
+    TextEditingController passwordConfirmController = TextEditingController();
+
     showDialog(
         context: context,
         builder: (context) {
@@ -64,12 +67,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   ),
                   TextBox(
                     placeholder: "Password",
+                    controller: passwordController,
                   ),
                   SizedBox(
                     height: 10,
                   ),
                   TextBox(
                     placeholder: "Confirm Password",
+                    controller: passwordConfirmController,
                   )
                 ],
               ),
@@ -84,39 +89,103 @@ class _DashboardScreenState extends State<DashboardScreen> {
               FilledButton(
                   child: const Text("Setup Arthur Morgan"),
                   onPressed: () {
+                    if (passwordController.text !=
+                        passwordConfirmController.text) {
+                      log("password mismatch");
+                      return;
+                    }
+                    Provider.of<GDriveProvider>(context, listen: false)
+                        .setupArthurMorgan(passwordController.text);
                     Navigator.pop(context);
-                    GlobalData.gDriveManager!.setupArthurMorgan().then((_) {
-                      if (!_) {
-                        log("failed");
-                      } else {
-                        setState(() {});
-                      }
-                    });
                   }),
             ],
           );
         });
   }
 
+  void showUploadingDialog(BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return ContentDialog(
+            title: const Text("Uploading"),
+            content: Container(
+              height: 50,
+              child: Column(
+                children: [
+                  Text("Encrypting and uploading file to GDrive"),
+                  SizedBox(
+                    height: 25,
+                  ),
+                  ProgressBar(),
+                ],
+              ),
+            ),
+          );
+        });
+  }
+
   void uploadFile() async {
+    // TODO: MOVE THIS
     log("upload start");
     var file = await FileHandler.getFile();
     if (file == null) return;
-    var encryptedFile = await FileHandler.encryptFile(file, "test1test");
+    showUploadingDialog(context); // ok next time thanks for the warning
+    var encryptedFile = await FileHandler.encryptFile(file);
     var stream =
         await FileHandler.getStreamFromFile(encryptedFile.encryptedFile);
     await GlobalData.gDriveManager!
         .uploadFile(encryptedFile.encryptedName, encryptedFile.length, stream);
     log("done");
+    Navigator.pop(context);
+    Provider.of<GDriveProvider>(context, listen: false).getFileList();
   }
 
-  // void checkIfNewUser() async {
-  //   GlobalData.gDriveManager!.checkIfNewUser().then((isNew) {
-  //     if (isNew) {
-  //
-  //     }
-  //   });
-  // }
+  void loginDialog(BuildContext context) {
+    TextEditingController passwordController = TextEditingController();
+
+    showDialog(
+        context: context,
+        builder: (context) {
+          return ContentDialog(
+            title: const Text("Login"),
+            content: Container(
+              height: 90,
+              child: Column(
+                children: [
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Text(
+                      "'ArthurMorgan' is installed in this GDrive, enter the password to continue"),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  TextBox(
+                    placeholder: "Password",
+                    controller: passwordController,
+                  ),
+                ],
+              ),
+            ),
+            actions: [
+              Button(
+                child: const Text("Exit"),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+              FilledButton(
+                  child: const Text("Login"),
+                  onPressed: () {
+                    Provider.of<GDriveProvider>(context, listen: false)
+                        .login(passwordController.text);
+                    Navigator.pop(context);
+                  }),
+            ],
+          );
+        });
+  }
 
   @override
   void initState() {
@@ -128,7 +197,23 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Widget build(BuildContext context) {
     var gdriveProvider = Provider.of<GDriveProvider>(context);
 
+    if (gdriveProvider.getUserState == UserState.noninitiated) {
+      Future.delayed(Duration.zero, () async {
+        // this thing works but not sure if its a good practice
+        showNewUserDialog(context);
+      });
+    }
+
     if (gdriveProvider.getUserState == UserState.initiated &&
+        !gdriveProvider.getIsLoggedIn) {
+      Future.delayed(Duration.zero, () async {
+        // this thing works but not sure if its a good practice
+        loginDialog(context);
+      });
+    }
+
+    if (gdriveProvider.getUserState == UserState.initiated &&
+        gdriveProvider.getIsLoggedIn &&
         !gdriveProvider.getFileListFetched) {
       gdriveProvider.getFileList();
     }
@@ -227,27 +312,46 @@ class FileListGrid extends StatelessWidget {
 class FileInfoSheet extends StatelessWidget {
   const FileInfoSheet({super.key});
 
+  Widget previewWidget(var fileinfosheetprovider) {
+    // refactor it pls
+    if (fileinfosheetprovider.getPreviewLoadState ==
+        PreviewLoadState.notloaded) {
+      return Card(
+        child: Container(
+          height: 250,
+          child: Center(
+              child: Button(
+            child: Text("Show Preview"),
+            onPressed: () {
+              fileinfosheetprovider.loadAndDecryptPreview();
+            },
+          )),
+        ),
+      );
+    } else if (fileinfosheetprovider.getPreviewLoadState ==
+        PreviewLoadState.loading) {
+      return Card(
+        child: Container(height: 250, child: Center(child: ProgressRing())),
+      );
+    } else {
+      return Card(
+        child: Container(
+            height: 250,
+            child: Image.memory(fileinfosheetprovider.getPreviewData)),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     var fileinfosheetprovider = Provider.of<FileInfoSheetProvider>(context);
-    if (!fileinfosheetprovider.getIsOpen) return ProgressRing();
+    if (!fileinfosheetprovider.getIsOpen) return Center(child: ProgressRing());
     return Container(
       margin: EdgeInsets.all(10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Card(
-            child: Container(
-              height: 200,
-              child: Button(
-                child: Text("Show Preview"),
-                onPressed: () {
-                  GlobalData.gDriveManager!.downloadFile(
-                      fileinfosheetprovider.getcurrentSelectedFile);
-                },
-              ),
-            ),
-          ),
+          previewWidget(fileinfosheetprovider),
           SizedBox(
             height: 10,
           ),

@@ -5,3 +5,5 @@ enum InterfaceBrightness {
 }
 
 enum UserState { initiated, noninitiated, undetermined }
+
+enum PreviewLoadState { notloaded, loading, loaded }

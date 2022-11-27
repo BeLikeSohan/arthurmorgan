@@ -107,7 +107,7 @@ class _MainWindowState extends State<MainWindow> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text("ArthurMorgan"),
-                  Text("Version 0.1"),
+                  Text("Version 0.1 - Dev"),
                   Text("github.com/belikesohan/arthurmorgan")
                 ],
               )),

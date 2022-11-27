@@ -93,7 +93,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   child: const Text("Setup Arthur Morgan"),
                   onPressed: () {
                     if (passwordController.text !=
-                        passwordConfirmController.text) {
+                            passwordConfirmController.text &&
+                        passwordController.text.isEmpty) {
                       log("password mismatch");
                       return;
                     }
@@ -189,7 +190,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   child: const Text("Login"),
                   onPressed: () {
                     Provider.of<GDriveProvider>(context, listen: false)
-                        .login("password"); // TODO
+                        .login(passwordController.text);
                     Navigator.pop(context);
                   }),
             ],

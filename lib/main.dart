@@ -101,7 +101,16 @@ class _MainWindowState extends State<MainWindow> {
             PaneItem(
               icon: const Icon(FluentIcons.teamwork),
               title: const Text("About"),
-              body: Container(),
+              body: Container(
+                  child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text("ArthurMorgan"),
+                  Text("Version 0.1"),
+                  Text("github.com/belikesohan/arthurmorgan")
+                ],
+              )),
             ),
           ],
         ),

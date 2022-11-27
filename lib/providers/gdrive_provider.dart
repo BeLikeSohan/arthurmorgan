@@ -7,8 +7,8 @@ import 'package:desktop_experiments/models/gfile.dart';
 import 'package:flutter/material.dart';
 
 class GDriveProvider extends ChangeNotifier {
-  List<GFile>? files;
-  bool fileListFetched = false;
+  List<GFile>? files = [];
+  bool fileListFetched = false; // TODO: PATCH
   UserState userState = UserState.undetermined;
   bool isLoggedIn =
       false; // THIS isLoggedIn is not google login, the internal login method using verify file

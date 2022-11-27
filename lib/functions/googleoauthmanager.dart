@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'dart:io';
+import 'package:desktop_experiments/global_data.dart';
 import 'package:http/http.dart' as http;
 import 'package:oauth2/oauth2.dart' as oauth2;
 import 'package:url_launcher/url_launcher.dart';
@@ -7,9 +8,8 @@ import 'package:url_launcher/url_launcher.dart';
 class GoogleOAuthManager {
   String authorizationEndpoint = "https://accounts.google.com/o/oauth2/v2/auth";
   String tokenEndpoint = "https://oauth2.googleapis.com/token";
-  String clientID =
-      "260646426645-nfsr4o41qebl01ajns4mgimld6vh6egb.apps.googleusercontent.com";
-  String clientSecret = "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";
+  String clientID = GlobalData.gClientId!;
+  String clientSecret = GlobalData.gClientSecret!;
 
   HttpServer? redirectServer;
   oauth2.Client? client;

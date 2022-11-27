@@ -1,11 +1,15 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:desktop_experiments/enums.dart';
 import 'package:desktop_experiments/functions/filehandler.dart';
 import 'package:desktop_experiments/global_data.dart';
 import 'package:desktop_experiments/models/gfile.dart';
+import 'package:desktop_experiments/providers/taskinfopopup_provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
+import 'package:path/path.dart' as path;
+import 'package:provider/provider.dart';
 
 class FileInfoSheetProvider extends ChangeNotifier {
   bool isOpen = false;
@@ -43,6 +47,37 @@ class FileInfoSheetProvider extends ChangeNotifier {
     }, onError: (error) {
       log("Some Error");
       notifyListeners();
+    });
+  }
+
+  void saveToDisk(BuildContext context) async {
+    Provider.of<TaskInfoPopUpProvider>(context, listen: false)
+        .show("Downloading ${currentSelectedFile!.name}");
+    List<int> encryptedData = [];
+    List<int> data = [];
+    var stream =
+        await GlobalData.gDriveManager!.downloadFile(currentSelectedFile!);
+    stream.listen((data) {
+      encryptedData.insertAll(encryptedData.length, data);
+    }, onDone: () {
+      log("Download (Save to disk)");
+      data = FileHandler.decryptUintList(Uint8List.fromList(encryptedData));
+
+      String docDir = GlobalData.gAppDocDir!.path;
+
+      String savePath = path.join(
+          docDir, "ArthurMorgan", "Downloads", currentSelectedFile!.name);
+      ;
+
+      log(savePath);
+
+      File(savePath).create(recursive: true).then((saveFile) {
+        saveFile.writeAsBytes(data);
+        log("SAVE TO DISK DONE");
+        Provider.of<TaskInfoPopUpProvider>(context, listen: false).hide();
+      });
+    }, onError: (error) {
+      log("Download (Save to disk)");
     });
   }
 

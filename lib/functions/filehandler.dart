@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'dart:ffi';
 import 'dart:io';
 
+import 'package:desktop_experiments/global_data.dart';
 import 'package:desktop_experiments/models/encrypted_file.dart';
 import 'package:desktop_experiments/models/gfile.dart';
 import 'package:desktop_experiments/utils.dart';
@@ -14,6 +15,8 @@ import 'dart:typed_data';
 import 'package:encrypt/encrypt.dart' as encrypt;
 
 import 'dart:convert';
+
+import 'package:path_provider/path_provider.dart';
 
 class FileHandler {
   static FileCryptor? fileCryptor;
@@ -54,12 +57,13 @@ class FileHandler {
     return encrypter.encrypt("ArthutMorgan", iv: iv).base64;
   }
 
-  static Future<File?> getFile() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles();
+  static Future<List<File>?> getFile() async {
+    FilePickerResult? result = await FilePicker.platform
+        .pickFiles(type: FileType.image, allowMultiple: true);
 
     if (result != null) {
-      File file = File(result.files.single.path!);
-      return file;
+      List<File> files = result.paths.map((path) => File(path!)).toList();
+      return files;
     }
 
     return null;

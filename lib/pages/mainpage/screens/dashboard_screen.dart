@@ -1,11 +1,14 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:desktop_experiments/enums.dart';
 import 'package:desktop_experiments/functions/filehandler.dart';
 import 'package:desktop_experiments/functions/gdrivemanager.dart';
 import 'package:desktop_experiments/global_data.dart';
+import 'package:desktop_experiments/pages/mainpage/screens/components/taskinfopopup.dart';
 import 'package:desktop_experiments/providers/fileinfosheet_provider.dart';
 import 'package:desktop_experiments/providers/gdrive_provider.dart';
+import 'package:desktop_experiments/providers/taskinfopopup_provider.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/material.dart' as material;
 import 'package:googleapis/servicemanagement/v1.dart';
@@ -128,16 +131,23 @@ class _DashboardScreenState extends State<DashboardScreen> {
   void uploadFile() async {
     // TODO: MOVE THIS
     log("upload start");
-    var file = await FileHandler.getFile();
-    if (file == null) return;
-    showUploadingDialog(context); // ok next time thanks for the warning
-    var encryptedFile = await FileHandler.encryptFile(file);
-    var stream =
-        await FileHandler.getStreamFromFile(encryptedFile.encryptedFile);
-    await GlobalData.gDriveManager!
-        .uploadFile(encryptedFile.encryptedName, encryptedFile.length, stream);
-    log("done");
-    Navigator.pop(context);
+    var files = await FileHandler.getFile();
+    if (files == null) return;
+    // showUploadingDialog(context); // ok next time thanks for the warning
+
+    for (File file in files) {
+      Provider.of<TaskInfoPopUpProvider>(context, listen: false)
+          .show("Uploading ${file.path.split("\\").last}");
+      var encryptedFile = await FileHandler.encryptFile(file);
+      var stream =
+          await FileHandler.getStreamFromFile(encryptedFile.encryptedFile);
+      await GlobalData.gDriveManager!.uploadFile(
+          encryptedFile.encryptedName, encryptedFile.length, stream);
+      log("done");
+    }
+
+    // Navigator.pop(context);
+    Provider.of<TaskInfoPopUpProvider>(context, listen: false).hide();
     Provider.of<GDriveProvider>(context, listen: false).getFileList();
   }
 
@@ -179,7 +189,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   child: const Text("Login"),
                   onPressed: () {
                     Provider.of<GDriveProvider>(context, listen: false)
-                        .login(passwordController.text);
+                        .login("password"); // TODO
                     Navigator.pop(context);
                   }),
             ],
@@ -219,43 +229,49 @@ class _DashboardScreenState extends State<DashboardScreen> {
     }
 
     if (gdriveProvider.getFileListFetched) {
-      return BodyWithSideSheet(
-        sheetWidth: 350,
-        body: Container(
-          margin: EdgeInsets.all(10),
-          child: Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+      return Stack(
+        alignment: Alignment.bottomRight,
+        children: [
+          BodyWithSideSheet(
+            sheetWidth: 350,
+            body: Container(
+              margin: EdgeInsets.all(10),
+              child: Column(
                 children: [
-                  Button(
-                    child: Text("Upload"),
-                    onPressed: () {
-                      uploadFile();
-                    },
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Button(
+                        child: Text("Upload"),
+                        onPressed: () {
+                          uploadFile();
+                        },
+                      ),
+                      SizedBox(
+                        width: 5,
+                      ),
+                      Button(
+                        child: Text("Download All"),
+                        onPressed: null,
+                      ),
+                      SizedBox(
+                        width: 5,
+                      ),
+                      Button(
+                        child: Text("New Folder"),
+                        onPressed: null,
+                      )
+                    ],
                   ),
-                  SizedBox(
-                    width: 5,
-                  ),
-                  Button(
-                    child: Text("Download All"),
-                    onPressed: () {},
-                  ),
-                  SizedBox(
-                    width: 5,
-                  ),
-                  Button(
-                    child: Text("New Folder"),
-                    onPressed: () {},
-                  )
+                  Expanded(child: FileListGrid())
                 ],
               ),
-              Expanded(child: FileListGrid())
-            ],
+            ),
+            sheetBody: FileInfoSheet(),
+            show: Provider.of<FileInfoSheetProvider>(context).getIsOpen,
           ),
-        ),
-        sheetBody: FileInfoSheet(),
-        show: Provider.of<FileInfoSheetProvider>(context).getIsOpen,
+          TaskInfoPopup()
+        ],
       );
     }
 
@@ -386,6 +402,15 @@ class FileInfoSheet extends StatelessWidget {
           Text(
             fileinfosheetprovider.getcurrentSelectedFile.createdTime.toString(),
           ),
+          SizedBox(
+            height: 20,
+          ),
+          Button(
+            child: Text("Download"),
+            onPressed: () {
+              fileinfosheetprovider.saveToDisk(context);
+            },
+          )
         ],
       ),
     );

@@ -1,10 +1,13 @@
 import 'package:bitsdojo_window/bitsdojo_window.dart';
+import 'package:desktop_experiments/global_data.dart';
 import 'package:desktop_experiments/pages/mainpage/homepage.dart';
 import 'package:desktop_experiments/providers/auth_provider.dart';
 import 'package:desktop_experiments/providers/fileinfosheet_provider.dart';
 import 'package:desktop_experiments/providers/gdrive_provider.dart';
+import 'package:desktop_experiments/providers/taskinfopopup_provider.dart';
 import 'package:desktop_experiments/windowtitlebar.dart';
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 
 import 'enums.dart';
@@ -19,9 +22,11 @@ void main() async {
     win.minSize = initialSize;
     win.size = initialSize;
     win.alignment = Alignment.centerRight;
-    win.title = "Custom window with Flutter";
+    win.title = "ArthurMorgan";
     win.show();
   });
+
+  GlobalData.gAppDocDir = await getApplicationDocumentsDirectory();
 }
 
 class MyApp extends StatelessWidget {
@@ -39,9 +44,12 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider.value(
           value: FileInfoSheetProvider(),
         ),
+        ChangeNotifierProvider.value(
+          value: TaskInfoPopUpProvider(),
+        ),
       ],
       child: FluentApp(
-        title: 'Flutter Demo',
+        title: "ArthurMorgan",
         debugShowCheckedModeBanner: false,
         theme: ThemeData(accentColor: Colors.blue, brightness: Brightness.dark),
         themeMode: ThemeMode.dark,
@@ -70,9 +78,9 @@ class _MainWindowState extends State<MainWindow> {
     return SafeArea(
       child: NavigationView(
         appBar: NavigationAppBar(
-          title: Text("Desktop Experiments"),
+          title: Text("ArthurMorgan"),
           leading: Container(
-            child: Icon(FluentIcons.visual_studio_for_windows),
+            child: Icon(FluentIcons.authenticator_app),
           ),
           actions: WindowTitleBar(
             brightness: InterfaceBrightness.dark,
@@ -88,18 +96,8 @@ class _MainWindowState extends State<MainWindow> {
               title: const Text("Home"),
               body: HomePage(),
             ),
-            PaneItem(
-              icon: const Icon(FluentIcons.photo2),
-              title: const Text("Files"),
-              body: Container(),
-            ),
           ],
           footerItems: [
-            PaneItem(
-              icon: const Icon(FluentIcons.settings),
-              title: const Text("Settings"),
-              body: HomePage(),
-            ),
             PaneItem(
               icon: const Icon(FluentIcons.teamwork),
               title: const Text("About"),

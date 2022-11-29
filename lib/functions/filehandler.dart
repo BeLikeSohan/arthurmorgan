@@ -2,10 +2,10 @@ import 'dart:developer';
 import 'dart:ffi';
 import 'dart:io';
 
-import 'package:desktop_experiments/global_data.dart';
-import 'package:desktop_experiments/models/encrypted_file.dart';
-import 'package:desktop_experiments/models/gfile.dart';
-import 'package:desktop_experiments/utils.dart';
+import 'package:arthurmorgan/global_data.dart';
+import 'package:arthurmorgan/models/encrypted_file.dart';
+import 'package:arthurmorgan/models/gfile.dart';
+import 'package:arthurmorgan/utils.dart';
 import 'package:file_cryptor/file_cryptor.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
@@ -58,8 +58,8 @@ class FileHandler {
   }
 
   static Future<List<File>?> getFile() async {
-    FilePickerResult? result = await FilePicker.platform
-        .pickFiles(type: FileType.image, allowMultiple: true);
+    FilePickerResult? result =
+        await FilePicker.platform.pickFiles(allowMultiple: true);
 
     if (result != null) {
       List<File> files = result.paths.map((path) => File(path!)).toList();

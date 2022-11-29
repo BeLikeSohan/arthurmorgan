@@ -1,4 +1,4 @@
-name: desktop_experiments
+name: arthurmorgan
 description: A new Flutter project.
 
 # The following line prevents the package from being accidentally published to
@@ -53,6 +53,7 @@ dependencies:
   modal_side_sheet: ^0.0.1
   path_provider: ^2.0.11
   path: ^1.8.2
+  mime: ^1.0.2
 
 dev_dependencies:
   flutter_test:

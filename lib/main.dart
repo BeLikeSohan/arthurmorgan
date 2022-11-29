@@ -1,11 +1,11 @@
 import 'package:bitsdojo_window/bitsdojo_window.dart';
-import 'package:desktop_experiments/global_data.dart';
-import 'package:desktop_experiments/pages/mainpage/homepage.dart';
-import 'package:desktop_experiments/providers/auth_provider.dart';
-import 'package:desktop_experiments/providers/fileinfosheet_provider.dart';
-import 'package:desktop_experiments/providers/gdrive_provider.dart';
-import 'package:desktop_experiments/providers/taskinfopopup_provider.dart';
-import 'package:desktop_experiments/windowtitlebar.dart';
+import 'package:arthurmorgan/global_data.dart';
+import 'package:arthurmorgan/pages/mainpage/homepage.dart';
+import 'package:arthurmorgan/providers/auth_provider.dart';
+import 'package:arthurmorgan/providers/fileinfosheet_provider.dart';
+import 'package:arthurmorgan/providers/gdrive_provider.dart';
+import 'package:arthurmorgan/providers/taskinfopopup_provider.dart';
+import 'package:arthurmorgan/windowtitlebar.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
@@ -107,7 +107,7 @@ class _MainWindowState extends State<MainWindow> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text("ArthurMorgan"),
-                  Text("Version 0.1 - Dev"),
+                  Text("Version 0.1.1 - Dev"),
                   Text("github.com/belikesohan/arthurmorgan")
                 ],
               )),

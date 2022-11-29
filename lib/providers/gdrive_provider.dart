@@ -1,9 +1,9 @@
 import 'dart:developer';
 
-import 'package:desktop_experiments/enums.dart';
-import 'package:desktop_experiments/functions/filehandler.dart';
-import 'package:desktop_experiments/global_data.dart';
-import 'package:desktop_experiments/models/gfile.dart';
+import 'package:arthurmorgan/enums.dart';
+import 'package:arthurmorgan/functions/filehandler.dart';
+import 'package:arthurmorgan/global_data.dart';
+import 'package:arthurmorgan/models/gfile.dart';
 import 'package:flutter/material.dart';
 
 class GDriveProvider extends ChangeNotifier {

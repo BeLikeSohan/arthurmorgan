@@ -1,6 +1,6 @@
 import 'dart:developer';
 import 'dart:io';
-import 'package:desktop_experiments/global_data.dart';
+import 'package:arthurmorgan/global_data.dart';
 import 'package:http/http.dart' as http;
 import 'package:oauth2/oauth2.dart' as oauth2;
 import 'package:url_launcher/url_launcher.dart';

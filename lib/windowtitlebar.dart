@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:bitsdojo_window/bitsdojo_window.dart';
-import 'package:desktop_experiments/enums.dart';
+import 'package:arthurmorgan/enums.dart';
 import 'package:flutter/material.dart';
 
 class WindowTitleBar extends StatelessWidget {

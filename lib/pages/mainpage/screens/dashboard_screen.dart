@@ -1,17 +1,18 @@
 import 'dart:developer';
 import 'dart:io';
 
-import 'package:desktop_experiments/enums.dart';
-import 'package:desktop_experiments/functions/filehandler.dart';
-import 'package:desktop_experiments/functions/gdrivemanager.dart';
-import 'package:desktop_experiments/global_data.dart';
-import 'package:desktop_experiments/pages/mainpage/screens/components/taskinfopopup.dart';
-import 'package:desktop_experiments/providers/fileinfosheet_provider.dart';
-import 'package:desktop_experiments/providers/gdrive_provider.dart';
-import 'package:desktop_experiments/providers/taskinfopopup_provider.dart';
+import 'package:arthurmorgan/enums.dart';
+import 'package:arthurmorgan/functions/filehandler.dart';
+import 'package:arthurmorgan/functions/gdrivemanager.dart';
+import 'package:arthurmorgan/global_data.dart';
+import 'package:arthurmorgan/pages/mainpage/screens/components/taskinfopopup.dart';
+import 'package:arthurmorgan/providers/fileinfosheet_provider.dart';
+import 'package:arthurmorgan/providers/gdrive_provider.dart';
+import 'package:arthurmorgan/providers/taskinfopopup_provider.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/material.dart' as material;
 import 'package:googleapis/servicemanagement/v1.dart';
+import 'package:mime/mime.dart';
 import 'package:modal_side_sheet/modal_side_sheet.dart';
 import 'package:provider/provider.dart';
 
@@ -362,13 +363,16 @@ class FileInfoSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var fileinfosheetprovider = Provider.of<FileInfoSheetProvider>(context);
+
     if (!fileinfosheetprovider.getIsOpen) return Center(child: ProgressRing());
     return Container(
       margin: EdgeInsets.all(10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          previewWidget(fileinfosheetprovider),
+          if (lookupMimeType(fileinfosheetprovider.currentSelectedFile!.name)!
+              .startsWith("image"))
+            previewWidget(fileinfosheetprovider),
           SizedBox(
             height: 10,
           ),

@@ -10,20 +10,20 @@ class SignInScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var authProvider = Provider.of<AuthProvider>(context, listen: false);
-    return Container(
+    return SizedBox(
       width: double.infinity,
       height: double.infinity,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(
+          const Text(
             "Hi There,",
             style: TextStyle(color: Color.fromARGB(255, 177, 173, 169)),
           ),
-          Text(
+          const Text(
               "You need to sign-in using your Google Account to connect this app with your GDrive.",
               style: TextStyle(color: Color.fromARGB(255, 177, 173, 169))),
-          SizedBox(
+          const SizedBox(
             height: 10,
           ),
           FilledButton(

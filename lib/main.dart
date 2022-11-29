@@ -77,11 +77,9 @@ class _MainWindowState extends State<MainWindow> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: NavigationView(
-        appBar: NavigationAppBar(
+        appBar: const NavigationAppBar(
           title: Text("ArthurMorgan"),
-          leading: Container(
-            child: Icon(FluentIcons.authenticator_app),
-          ),
+          leading: Icon(FluentIcons.authenticator_app),
           actions: WindowTitleBar(
             brightness: InterfaceBrightness.dark,
           ),
@@ -94,23 +92,22 @@ class _MainWindowState extends State<MainWindow> {
             PaneItem(
               icon: const Icon(FluentIcons.home),
               title: const Text("Home"),
-              body: HomePage(),
+              body: const HomePage(),
             ),
           ],
           footerItems: [
             PaneItem(
               icon: const Icon(FluentIcons.teamwork),
               title: const Text("About"),
-              body: Container(
-                  child: Column(
+              body: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
+                children: const [
                   Text("ArthurMorgan"),
                   Text("Version 0.1.1 - Dev"),
                   Text("github.com/belikesohan/arthurmorgan")
                 ],
-              )),
+              ),
             ),
           ],
         ),

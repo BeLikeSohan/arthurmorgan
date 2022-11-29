@@ -11,12 +11,12 @@ class TaskInfoPopup extends StatelessWidget {
     return taskInfoProvider.getIsShow
         ? Container(
             width: 300,
-            margin: EdgeInsets.all(15),
+            margin: const EdgeInsets.all(15),
             child: InfoBar(
               title: Text(taskInfoProvider.getTaskTitle),
               content: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
+                children: const [
                   SizedBox(height: 5),
                   ProgressBar(),
                 ],

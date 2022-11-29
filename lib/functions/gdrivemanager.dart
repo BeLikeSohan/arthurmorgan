@@ -1,11 +1,8 @@
-import 'dart:convert';
 import 'dart:developer';
 
 import 'package:arthurmorgan/functions/filehandler.dart';
-import 'package:arthurmorgan/global_data.dart';
 import 'package:arthurmorgan/models/gfile.dart';
 import 'package:googleapis/drive/v3.dart' as drive;
-import 'package:mime/mime.dart';
 import 'package:oauth2/oauth2.dart';
 
 class GDriveManager {

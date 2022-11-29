@@ -1,17 +1,13 @@
 import 'dart:developer';
 import 'dart:io';
-
 import 'package:arthurmorgan/enums.dart';
 import 'package:arthurmorgan/functions/filehandler.dart';
-import 'package:arthurmorgan/functions/gdrivemanager.dart';
 import 'package:arthurmorgan/global_data.dart';
 import 'package:arthurmorgan/pages/mainpage/screens/components/taskinfopopup.dart';
 import 'package:arthurmorgan/providers/fileinfosheet_provider.dart';
 import 'package:arthurmorgan/providers/gdrive_provider.dart';
 import 'package:arthurmorgan/providers/taskinfopopup_provider.dart';
 import 'package:fluent_ui/fluent_ui.dart';
-import 'package:flutter/material.dart' as material;
-import 'package:googleapis/servicemanagement/v1.dart';
 import 'package:mime/mime.dart';
 import 'package:modal_side_sheet/modal_side_sheet.dart';
 import 'package:provider/provider.dart';
@@ -60,20 +56,20 @@ class _DashboardScreenState extends State<DashboardScreen> {
         builder: (context) {
           return ContentDialog(
             title: const Text("Setup Arthur Morgan"),
-            content: Container(
+            content: SizedBox(
               height: 130,
               child: Column(
                 children: [
-                  Text(
+                  const Text(
                       "This will create a folder named 'ArthurMorgan' in your GDrive root directory."),
-                  SizedBox(
+                  const SizedBox(
                     height: 10,
                   ),
                   TextBox(
                     placeholder: "Password",
                     controller: passwordController,
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 10,
                   ),
                   TextBox(
@@ -114,10 +110,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
         builder: (context) {
           return ContentDialog(
             title: const Text("Uploading"),
-            content: Container(
+            content: SizedBox(
               height: 50,
               child: Column(
-                children: [
+                children: const [
                   Text("Encrypting and uploading file to GDrive"),
                   SizedBox(
                     height: 25,
@@ -161,16 +157,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
         builder: (context) {
           return ContentDialog(
             title: const Text("Login"),
-            content: Container(
+            content: SizedBox(
               height: 90,
               child: Column(
                 children: [
-                  SizedBox(
+                  const SizedBox(
                     height: 10,
                   ),
-                  Text(
+                  const Text(
                       "'ArthurMorgan' is installed in this GDrive, enter the password to continue"),
-                  SizedBox(
+                  const SizedBox(
                     height: 10,
                   ),
                   TextBox(
@@ -237,50 +233,48 @@ class _DashboardScreenState extends State<DashboardScreen> {
           BodyWithSideSheet(
             sheetWidth: 350,
             body: Container(
-              margin: EdgeInsets.all(10),
+              margin: const EdgeInsets.all(10),
               child: Column(
                 children: [
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       Button(
-                        child: Text("Upload"),
+                        child: const Text("Upload"),
                         onPressed: () {
                           uploadFile();
                         },
                       ),
-                      SizedBox(
+                      const SizedBox(
                         width: 5,
                       ),
-                      Button(
+                      const Button(
+                        onPressed: null,
                         child: Text("Download All"),
-                        onPressed: null,
                       ),
-                      SizedBox(
+                      const SizedBox(
                         width: 5,
                       ),
-                      Button(
-                        child: Text("New Folder"),
+                      const Button(
                         onPressed: null,
+                        child: Text("New Folder"),
                       )
                     ],
                   ),
-                  Expanded(child: FileListGrid())
+                  const Expanded(child: FileListGrid())
                 ],
               ),
             ),
-            sheetBody: FileInfoSheet(),
+            sheetBody: const FileInfoSheet(),
             show: Provider.of<FileInfoSheetProvider>(context).getIsOpen,
           ),
-          TaskInfoPopup()
+          const TaskInfoPopup()
         ],
       );
     }
 
-    return Container(
-      child: Center(
-        child: ProgressRing(),
-      ),
+    return const Center(
+      child: ProgressRing(),
     );
   }
 }
@@ -293,7 +287,7 @@ class FileListGrid extends StatelessWidget {
     var gdriveProvider = Provider.of<GDriveProvider>(context);
 
     return Container(
-      margin: EdgeInsets.only(top: 10),
+      margin: const EdgeInsets.only(top: 10),
       //height: double.infinity,
       child: GridView.builder(
           gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
@@ -309,7 +303,7 @@ class FileListGrid extends StatelessWidget {
                     .setCurrentGFile(gdriveProvider.getFiles[index]);
               },
               child: Container(
-                margin: EdgeInsets.all(2),
+                margin: const EdgeInsets.all(2),
                 child: Column(
                   children: [
                     const Expanded(
@@ -335,11 +329,11 @@ class FileInfoSheet extends StatelessWidget {
     if (fileinfosheetprovider.getPreviewLoadState ==
         PreviewLoadState.notloaded) {
       return Card(
-        child: Container(
+        child: SizedBox(
           height: 250,
           child: Center(
               child: Button(
-            child: Text("Show Preview"),
+            child: const Text("Show Preview"),
             onPressed: () {
               fileinfosheetprovider.loadAndDecryptPreview();
             },
@@ -348,12 +342,12 @@ class FileInfoSheet extends StatelessWidget {
       );
     } else if (fileinfosheetprovider.getPreviewLoadState ==
         PreviewLoadState.loading) {
-      return Card(
-        child: Container(height: 250, child: Center(child: ProgressRing())),
+      return const Card(
+        child: SizedBox(height: 250, child: Center(child: ProgressRing())),
       );
     } else {
       return Card(
-        child: Container(
+        child: SizedBox(
             height: 250,
             child: Image.memory(fileinfosheetprovider.getPreviewData)),
       );
@@ -364,54 +358,57 @@ class FileInfoSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     var fileinfosheetprovider = Provider.of<FileInfoSheetProvider>(context);
 
-    if (!fileinfosheetprovider.getIsOpen) return Center(child: ProgressRing());
+    if (!fileinfosheetprovider.getIsOpen) {
+      return const Center(child: ProgressRing());
+    }
+
     return Container(
-      margin: EdgeInsets.all(10),
+      margin: const EdgeInsets.all(10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (lookupMimeType(fileinfosheetprovider.currentSelectedFile!.name)!
               .startsWith("image"))
             previewWidget(fileinfosheetprovider),
-          SizedBox(
+          const SizedBox(
             height: 10,
           ),
-          Text(
+          const Text(
             "File Details",
             style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
           ),
-          SizedBox(
+          const SizedBox(
             height: 10,
           ),
-          Text(
+          const Text(
             "Name",
           ),
           Text(
             fileinfosheetprovider.getcurrentSelectedFile.name,
           ),
-          SizedBox(
+          const SizedBox(
             height: 10,
           ),
-          Text(
+          const Text(
             "Size",
           ),
           Text(
             fileinfosheetprovider.getcurrentSelectedFile.size.toString(),
           ),
-          SizedBox(
+          const SizedBox(
             height: 10,
           ),
-          Text(
+          const Text(
             "Created",
           ),
           Text(
             fileinfosheetprovider.getcurrentSelectedFile.createdTime.toString(),
           ),
-          SizedBox(
+          const SizedBox(
             height: 20,
           ),
           Button(
-            child: Text("Download"),
+            child: const Text("Download"),
             onPressed: () {
               fileinfosheetprovider.saveToDisk(context);
             },

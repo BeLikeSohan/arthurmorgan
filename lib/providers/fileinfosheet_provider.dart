@@ -67,7 +67,6 @@ class FileInfoSheetProvider extends ChangeNotifier {
 
       String savePath = path.join(
           docDir, "ArthurMorgan", "Downloads", currentSelectedFile!.name);
-      ;
 
       log(savePath);
 

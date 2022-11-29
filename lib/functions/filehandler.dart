@@ -1,22 +1,13 @@
 import 'dart:developer';
-import 'dart:ffi';
 import 'dart:io';
-
-import 'package:arthurmorgan/global_data.dart';
 import 'package:arthurmorgan/models/encrypted_file.dart';
 import 'package:arthurmorgan/models/gfile.dart';
 import 'package:arthurmorgan/utils.dart';
 import 'package:file_cryptor/file_cryptor.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
-
 import 'dart:typed_data';
-
 import 'package:encrypt/encrypt.dart' as encrypt;
-
-import 'dart:convert';
-
-import 'package:path_provider/path_provider.dart';
 
 class FileHandler {
   static FileCryptor? fileCryptor;

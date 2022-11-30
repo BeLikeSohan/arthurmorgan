@@ -311,7 +311,10 @@ class FileListGrid extends StatelessWidget {
                       FluentIcons.photo2,
                       size: 30,
                     )),
-                    Text(gdriveProvider.getFiles[index].name)
+                    Text(
+                      gdriveProvider.getFiles[index].name,
+                      overflow: TextOverflow.ellipsis,
+                    )
                   ],
                 ),
               ),

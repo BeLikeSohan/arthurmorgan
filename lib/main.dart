@@ -86,14 +86,6 @@ class _MainWindowState extends State<MainWindow> {
     return NavigationPaneTheme(
       data: NavigationPaneThemeData(backgroundColor: Colors.transparent),
       child: NavigationView(
-        // appBar: const NavigationAppBar(
-        //   title: Text("ArthurMorgan"),
-        //   leading: Icon(FluentIcons.authenticator_app),
-        //   actions: WindowTitleBar(
-        //     brightness: InterfaceBrightness.dark,
-        //   ),
-        // ),
-
         appBar: NavigationAppBar(
           title: MoveWindow(
             child: Align(
@@ -120,17 +112,14 @@ class _MainWindowState extends State<MainWindow> {
             PaneItem(
               icon: const Icon(FluentIcons.teamwork),
               title: const Text("About"),
-              body: Container(
-                color: Colors.black,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: const [
-                    Text("ArthurMorgan"),
-                    Text("Version 0.1.1 - Dev"),
-                    Text("github.com/belikesohan/arthurmorgan")
-                  ],
-                ),
+              body: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: const [
+                  Text("ArthurMorgan"),
+                  Text("Version 0.1.1 - Dev"),
+                  Text("github.com/belikesohan/arthurmorgan")
+                ],
               ),
             ),
           ],

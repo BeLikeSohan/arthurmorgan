@@ -7,6 +7,7 @@ import 'package:arthurmorgan/providers/gdrive_provider.dart';
 import 'package:arthurmorgan/providers/taskinfopopup_provider.dart';
 import 'package:arthurmorgan/windowtitlebar.dart';
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:flutter_acrylic/flutter_acrylic.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -14,6 +15,13 @@ import 'enums.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Window.initialize();
+
+  await Window.setEffect(
+    effect: WindowEffect.aero,
+    color: Color(0xCC222222),
+  );
+
   runApp(const MyApp());
 
   doWhenWindowReady(() {
@@ -75,11 +83,24 @@ class _MainWindowState extends State<MainWindow> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
+    return NavigationPaneTheme(
+      data: NavigationPaneThemeData(backgroundColor: Colors.transparent),
       child: NavigationView(
-        appBar: const NavigationAppBar(
-          title: Text("ArthurMorgan"),
-          leading: Icon(FluentIcons.authenticator_app),
+        // appBar: const NavigationAppBar(
+        //   title: Text("ArthurMorgan"),
+        //   leading: Icon(FluentIcons.authenticator_app),
+        //   actions: WindowTitleBar(
+        //     brightness: InterfaceBrightness.dark,
+        //   ),
+        // ),
+
+        appBar: NavigationAppBar(
+          title: MoveWindow(
+            child: Align(
+              alignment: AlignmentDirectional.centerStart,
+              child: Text("Arthur Morgan"),
+            ),
+          ),
           actions: WindowTitleBar(
             brightness: InterfaceBrightness.dark,
           ),
@@ -99,14 +120,17 @@ class _MainWindowState extends State<MainWindow> {
             PaneItem(
               icon: const Icon(FluentIcons.teamwork),
               title: const Text("About"),
-              body: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: const [
-                  Text("ArthurMorgan"),
-                  Text("Version 0.1.1 - Dev"),
-                  Text("github.com/belikesohan/arthurmorgan")
-                ],
+              body: Container(
+                color: Colors.black,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: const [
+                    Text("ArthurMorgan"),
+                    Text("Version 0.1.1 - Dev"),
+                    Text("github.com/belikesohan/arthurmorgan")
+                  ],
+                ),
               ),
             ),
           ],

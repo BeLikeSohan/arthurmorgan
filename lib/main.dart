@@ -1,3 +1,4 @@
+import 'package:arthurmorgan/pages/settings/settings.dart';
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:arthurmorgan/global_data.dart';
 import 'package:arthurmorgan/pages/mainpage/homepage.dart';
@@ -109,6 +110,10 @@ class _MainWindowState extends State<MainWindow> {
             ),
           ],
           footerItems: [
+            PaneItem(
+                icon: const Icon(FluentIcons.settings),
+                title: const Text("Settings"),
+                body: SettingsPage()),
             PaneItem(
               icon: const Icon(FluentIcons.teamwork),
               title: const Text("About"),

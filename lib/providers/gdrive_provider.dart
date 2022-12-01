@@ -9,9 +9,9 @@ import 'package:flutter/material.dart';
 class GDriveProvider extends ChangeNotifier {
   List<GFile>? files = [];
   bool fileListFetched = false; // TODO: PATCH
-  UserState userState = UserState.undetermined;
+  UserState userState = UserState.initiated;
   bool isLoggedIn =
-      false; // THIS isLoggedIn is not google login, the internal login method using verify file
+      true; // THIS isLoggedIn is not google login, the internal login method using verify file
 
   void getFileList() async {
     files = await GlobalData.gDriveManager!.getFiles();

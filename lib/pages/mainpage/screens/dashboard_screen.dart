@@ -233,37 +233,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
           BodyWithSideSheet(
             sheetWidth: 350,
             body: Container(
-              margin: const EdgeInsets.all(10),
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Button(
-                        child: const Text("Upload"),
-                        onPressed: () {
-                          uploadFile();
-                        },
-                      ),
-                      const SizedBox(
-                        width: 5,
-                      ),
-                      const Button(
-                        onPressed: null,
-                        child: Text("Download All"),
-                      ),
-                      const SizedBox(
-                        width: 5,
-                      ),
-                      const Button(
-                        onPressed: null,
-                        child: Text("New Folder"),
-                      )
-                    ],
-                  ),
-                  const Expanded(child: FileListGrid())
-                ],
-              ),
+              margin: const EdgeInsets.only(left: 15, top: 26, right: 15),
+              child: Expanded(child: FileListGrid()),
             ),
             sheetBody: const FileInfoSheet(),
             show: Provider.of<FileInfoSheetProvider>(context).getIsOpen,
@@ -366,7 +337,7 @@ class FileInfoSheet extends StatelessWidget {
     }
 
     return Container(
-      margin: const EdgeInsets.all(10),
+      margin: const EdgeInsets.only(left: 10, right: 10, top: 35),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

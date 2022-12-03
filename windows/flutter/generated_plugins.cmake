@@ -3,9 +3,10 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
-  bitsdojo_window_windows
   flutter_acrylic
+  screen_retriever
   url_launcher_windows
+  window_manager
   window_to_front
 )
 

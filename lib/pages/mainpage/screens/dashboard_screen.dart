@@ -126,29 +126,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
         });
   }
 
-  void uploadFile() async {
-    // TODO: MOVE THIS
-    log("upload start");
-    var files = await FileHandler.getFile();
-    if (files == null) return;
-    // showUploadingDialog(context); // ok next time thanks for the warning
-
-    for (File file in files) {
-      Provider.of<TaskInfoPopUpProvider>(context, listen: false)
-          .show("Uploading ${file.path.split("\\").last}");
-      var encryptedFile = await FileHandler.encryptFile(file);
-      var stream =
-          await FileHandler.getStreamFromFile(encryptedFile.encryptedFile);
-      await GlobalData.gDriveManager!.uploadFile(
-          encryptedFile.encryptedName, encryptedFile.length, stream);
-      log("done");
-    }
-
-    // Navigator.pop(context);
-    Provider.of<TaskInfoPopUpProvider>(context, listen: false).hide();
-    Provider.of<GDriveProvider>(context, listen: false).getFileList();
-  }
-
   void loginDialog(BuildContext context) {
     TextEditingController passwordController = TextEditingController();
 
@@ -233,7 +210,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           BodyWithSideSheet(
             sheetWidth: 350,
             body: Container(
-              margin: const EdgeInsets.only(left: 15, top: 26, right: 15),
+              margin: const EdgeInsets.only(left: 15, top: 29, right: 15),
               child: Expanded(child: FileListGrid()),
             ),
             sheetBody: const FileInfoSheet(),
@@ -337,7 +314,7 @@ class FileInfoSheet extends StatelessWidget {
     }
 
     return Container(
-      margin: const EdgeInsets.only(left: 10, right: 10, top: 35),
+      margin: const EdgeInsets.only(left: 10, right: 10, top: 39),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

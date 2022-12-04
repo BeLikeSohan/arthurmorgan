@@ -1,9 +1,11 @@
+import 'package:arthurmorgan/functions/preferencesmanager.dart';
 import 'package:arthurmorgan/pages/settings/settings.dart';
 import 'package:arthurmorgan/global_data.dart';
 import 'package:arthurmorgan/pages/mainpage/homepage.dart';
 import 'package:arthurmorgan/providers/auth_provider.dart';
 import 'package:arthurmorgan/providers/fileinfosheet_provider.dart';
 import 'package:arthurmorgan/providers/gdrive_provider.dart';
+import 'package:arthurmorgan/providers/settings_provider.dart';
 import 'package:arthurmorgan/providers/taskinfopopup_provider.dart';
 import 'package:arthurmorgan/widgets/custom_title_bar.dart';
 import 'package:arthurmorgan/windowtitlebar.dart';
@@ -20,6 +22,10 @@ void main() async {
 
   await Window.initialize();
   await WindowManager.instance.ensureInitialized();
+
+  PreferencesManager.init();
+  GlobalData.gAppDocDir = await getApplicationDocumentsDirectory();
+
   windowManager.waitUntilReadyToShow().then((_) async {
     await windowManager.setTitleBarStyle(
       TitleBarStyle.hidden,
@@ -35,9 +41,8 @@ void main() async {
       color: Color(0xCC222222),
     );
   });
-  runApp(const MyApp());
 
-  GlobalData.gAppDocDir = await getApplicationDocumentsDirectory();
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -57,6 +62,9 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider.value(
           value: TaskInfoPopUpProvider(),
+        ),
+        ChangeNotifierProvider.value(
+          value: SettingsProvider(),
         ),
       ],
       child: FluentApp(

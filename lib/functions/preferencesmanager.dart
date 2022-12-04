@@ -1,27 +1,45 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
+SharedPreferences? prefs;
+
 class PreferencesManager {
+  static void init() async {
+    prefs = await SharedPreferences.getInstance();
+  }
+
   static Future<bool> isLoggedInBefore() async {
-    final prefs = await SharedPreferences.getInstance();
     try {
-      return prefs.getBool("isLoggedInBefore")!;
+      return prefs!.getBool("isLoggedInBefore")!;
     } catch (e) {
       return false;
     }
   }
 
   static void setIsLoggedInBefore(bool _) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool("isLoggedInBefore", _);
+    await prefs!.setBool("isLoggedInBefore", _);
   }
 
   static Future<String> getOAuthJson() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString("oAuthJson")!;
+    return prefs!.getString("oAuthJson")!;
   }
 
   static void setOAuthJson(String oAuthJson) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString("oAuthJson", oAuthJson);
+    await prefs!.setString("oAuthJson", oAuthJson);
+  }
+
+  static String getThemeMode() {
+    return prefs!.getString("themeMode") ?? "system";
+  }
+
+  static Future<void> setThemeMode(String themeMode) async {
+    await prefs!.setString("themeMode", themeMode);
+  }
+
+  static String getWindowStyle() {
+    return prefs!.getString("windowStyle") ?? "Opaque";
+  }
+
+  static Future<void> setWindowStyle(String windowStyle) async {
+    await prefs!.setString("windowStyle", windowStyle);
   }
 }

@@ -1,7 +1,9 @@
 import 'package:arthurmorgan/consts.dart';
+import 'package:arthurmorgan/providers/settings_provider.dart';
 import 'package:arthurmorgan/widgets/expandable_card.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:googleapis/servicemanagement/v1.dart';
+import 'package:provider/provider.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
@@ -69,27 +71,34 @@ class _ThemeModeSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var settingsProvider = Provider.of<SettingsProvider>(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text("Theme Mode", style: FluentTheme.of(context).typography.subtitle),
         spacer,
         RadioButton(
-          checked: false,
-          onChanged: (value) {},
+          checked: settingsProvider.currentThemeMode == "light",
+          onChanged: (value) {
+            if (value) settingsProvider.setThemeMode("light");
+          },
           content:
               Text("Light", style: FluentTheme.of(context).typography.body),
         ),
         spacer,
         RadioButton(
-          checked: true,
-          onChanged: (value) {},
+          checked: settingsProvider.currentThemeMode == "dark",
+          onChanged: (value) {
+            if (value) settingsProvider.setThemeMode("dark");
+          },
           content: Text("Dark"),
         ),
         spacer,
         RadioButton(
-          checked: false,
-          onChanged: (value) {},
+          checked: settingsProvider.currentThemeMode == "system",
+          onChanged: (value) {
+            if (value) settingsProvider.setThemeMode("system");
+          },
           content: Text("System"),
         ),
         biggerSpacer
@@ -103,6 +112,7 @@ class _WindowStyleSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var settingsProvider = Provider.of<SettingsProvider>(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -110,33 +120,43 @@ class _WindowStyleSection extends StatelessWidget {
             style: FluentTheme.of(context).typography.subtitle),
         spacer,
         RadioButton(
-          checked: false,
-          onChanged: (value) {},
+          checked: settingsProvider.windowStyle == "opaque",
+          onChanged: (value) {
+            if (value) settingsProvider.setWindowStyle("opaque");
+          },
           content:
               Text("Opaque", style: FluentTheme.of(context).typography.body),
         ),
         spacer,
         RadioButton(
-          checked: false,
-          onChanged: (value) {},
+          checked: settingsProvider.windowStyle == "transparent",
+          onChanged: (value) {
+            if (value) settingsProvider.setWindowStyle("transparent");
+          },
           content: Text("Transparent"),
         ),
         spacer,
         RadioButton(
-          checked: true,
-          onChanged: (value) {},
+          checked: settingsProvider.windowStyle == "aero",
+          onChanged: (value) {
+            if (value) settingsProvider.setWindowStyle("aero");
+          },
           content: Text("Aero"),
         ),
         spacer,
         RadioButton(
-          checked: false,
-          onChanged: (value) {},
+          checked: settingsProvider.windowStyle == "acrylic",
+          onChanged: (value) {
+            if (value) settingsProvider.setWindowStyle("acrylic");
+          },
           content: Text("Acrylic"),
         ),
         spacer,
         RadioButton(
-          checked: false,
-          onChanged: (value) {},
+          checked: settingsProvider.windowStyle == "mica",
+          onChanged: (value) {
+            if (value) settingsProvider.setWindowStyle("mica");
+          },
           content: Text("Mica"),
         ),
         biggerSpacer

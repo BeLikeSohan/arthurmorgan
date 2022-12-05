@@ -64,8 +64,8 @@ class SettingsPage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text("Version: 0.1.1-dev-arthurmorgan"),
-              Text("Backend: libarthurmorgan-0.1.0")
+              Text("Version: 0.2.0-dev-arthurmorgan"),
+              Text("Backend: libarthurmorgan-0.1.1")
             ],
           ),
         ),

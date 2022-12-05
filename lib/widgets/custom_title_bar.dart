@@ -20,15 +20,17 @@ class CustomTitleBar extends StatelessWidget {
     if (files == null) return;
     // showUploadingDialog(context); // ok next time thanks for the warning
 
+    int i = 1;
     for (File file in files) {
-      Provider.of<TaskInfoPopUpProvider>(context, listen: false)
-          .show("Uploading ${file.path.split("\\").last}");
+      Provider.of<TaskInfoPopUpProvider>(context, listen: false).show(
+          "Uploading ${file.path.split("\\").last} ($i / ${files.length})");
       var encryptedFile = await FileHandler.encryptFile(file);
       var stream =
           await FileHandler.getStreamFromFile(encryptedFile.encryptedFile);
       await GlobalData.gDriveManager!.uploadFile(
           encryptedFile.encryptedName, encryptedFile.length, stream);
       log("done");
+      i++;
     }
 
     // Navigator.pop(context);

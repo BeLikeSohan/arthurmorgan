@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:arthurmorgan/functions/filehandler.dart';
+import 'package:arthurmorgan/global_data.dart';
 import 'package:arthurmorgan/models/gfile.dart';
 import 'package:googleapis/drive/v3.dart' as drive;
 import 'package:oauth2/oauth2.dart';
@@ -31,33 +32,79 @@ class GDriveManager {
     return files;
   }
 
-  Future<bool> checkIfNewUser() async {
+  Future<String?> getFolderId(String folderName) async {
     String? folderId;
 
     var files = await driveApi.files.list();
     for (var item in files.files!) {
-      if (item.name == "ArthurMorgan") {
+      if (item.name == folderName) {
         folderId = item.id;
         break;
       }
     }
 
-    if (folderId == null) return true;
+    return folderId;
+  }
 
-    folderID = folderId;
+  Future<bool> checkIfNewUser() async {
+    if (GlobalData.gCustomRootFolder != null) {
+      GlobalData.gCustomRootFolderId =
+          await getFolderId(GlobalData.gCustomRootFolder!);
+      String? folderId;
 
-    var data = await driveApi.files.list(
-      q: "'$folderID' in parents",
-      $fields: "files(id, name)",
-    );
-    return data.files!.isEmpty;
+      var files = await driveApi.files.list(
+        q: "'${GlobalData.gCustomRootFolderId}' in parents",
+      );
+      for (var item in files.files!) {
+        if (item.name == "ArthurMorgan") {
+          folderId = item.id;
+          break;
+        }
+      }
+
+      if (folderId == null) return true;
+
+      folderID = folderId;
+
+      var data = await driveApi.files.list(
+        q: "'$folderID' in parents",
+        $fields: "files(id, name)",
+      );
+      return data.files!.isEmpty;
+    } else {
+      String? folderId;
+
+      var files = await driveApi.files.list(
+        $fields: "files(id, name, parents)",
+      );
+
+      for (var item in files.files!) {
+        if (item.name == "ArthurMorgan" && item.parents!.isEmpty) {
+          folderId = item.id;
+          break;
+        }
+      }
+
+      if (folderId == null) return true;
+
+      folderID = folderId;
+
+      var data = await driveApi.files.list(
+        q: "'$folderID' in parents",
+        $fields: "files(id, name)",
+      );
+      return data.files!.isEmpty;
+    }
   }
 
   Future<bool> setupArthurMorgan(String verifyString) async {
     try {
       var folder = await driveApi.files.create(drive.File()
         ..name = "ArthurMorgan"
-        ..mimeType = 'application/vnd.google-apps.folder');
+        ..mimeType = 'application/vnd.google-apps.folder'
+        ..parents = GlobalData.gCustomRootFolder == null
+            ? []
+            : [GlobalData.gCustomRootFolderId!]);
 
       final Stream<List<int>> mediaStream =
           Future.value(verifyString.codeUnits).asStream().asBroadcastStream();

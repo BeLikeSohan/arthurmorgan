@@ -10,4 +10,7 @@ class GlobalData {
 
   static String? gClientId;
   static String? gClientSecret;
+
+  static String? gCustomRootFolder;
+  static String? gCustomRootFolderId;
 }

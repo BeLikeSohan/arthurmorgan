@@ -75,7 +75,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   TextBox(
                     placeholder: "Confirm Password",
                     controller: passwordConfirmController,
-                  )
+                  ),
                 ],
               ),
             ),
@@ -98,6 +98,52 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     Provider.of<GDriveProvider>(context, listen: false)
                         .setupArthurMorgan(passwordController.text);
                     Navigator.pop(context);
+                  }),
+            ],
+          );
+        });
+  }
+
+  void selectRootFolderDialog(BuildContext context) {
+    TextEditingController rootFolderController = TextEditingController();
+
+    showDialog(
+        context: context,
+        builder: (context) {
+          return ContentDialog(
+            title: const Text("Select root folder"),
+            content: SizedBox(
+              height: 100,
+              child: Column(
+                children: [
+                  const Text(
+                      "Enter the folder name where ArthurMorgan is/should be installed. Leave empty to use the root folder."),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  TextBox(
+                    placeholder: "Folder name",
+                    controller: rootFolderController,
+                  ),
+                ],
+              ),
+            ),
+            actions: [
+              Button(
+                child: const Text("Not now"),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+              FilledButton(
+                  child: const Text("Next"),
+                  onPressed: () {
+                    if (rootFolderController.text.isNotEmpty) {
+                      GlobalData.gCustomRootFolder = rootFolderController.text;
+                    }
+                    Navigator.pop(context);
+                    Provider.of<GDriveProvider>(context, listen: false)
+                        .setUserState();
                   }),
             ],
           );
@@ -175,12 +221,18 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   void initState() {
     super.initState();
-    Provider.of<GDriveProvider>(context, listen: false).setUserState();
   }
 
   @override
   Widget build(BuildContext context) {
     var gdriveProvider = Provider.of<GDriveProvider>(context);
+
+    if (gdriveProvider.getUserState == UserState.undetermined) {
+      Future.delayed(Duration.zero, () async {
+        // this thing works but not sure if its a good practice
+        selectRootFolderDialog(context);
+      });
+    }
 
     if (gdriveProvider.getUserState == UserState.noninitiated) {
       Future.delayed(Duration.zero, () async {
@@ -211,7 +263,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             sheetWidth: 350,
             body: Container(
               margin: const EdgeInsets.only(left: 15, top: 29, right: 15),
-              child: Expanded(child: FileListGrid()),
+              child: FileListGrid(),
             ),
             sheetBody: const FileInfoSheet(),
             show: Provider.of<FileInfoSheetProvider>(context).getIsOpen,

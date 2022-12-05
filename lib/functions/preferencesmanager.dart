@@ -42,4 +42,13 @@ class PreferencesManager {
   static Future<void> setWindowStyle(String windowStyle) async {
     await prefs!.setString("windowStyle", windowStyle);
   }
+
+  static String? getCustomRootFolderName() {
+    return prefs!.getString("customRootFolderName");
+  }
+
+  static Future<void> setCustomRootFolderName(
+      String customRootFolderName) async {
+    await prefs!.setString("customRootFolderName", customRootFolderName);
+  }
 }

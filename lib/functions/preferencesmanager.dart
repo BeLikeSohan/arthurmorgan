@@ -15,7 +15,7 @@ class PreferencesManager {
     }
   }
 
-  static void setIsLoggedInBefore(bool _) async {
+  static Future<void> setIsLoggedInBefore(bool _) async {
     await prefs!.setBool("isLoggedInBefore", _);
   }
 
@@ -50,5 +50,10 @@ class PreferencesManager {
   static Future<void> setCustomRootFolderName(
       String customRootFolderName) async {
     await prefs!.setString("customRootFolderName", customRootFolderName);
+  }
+
+  static Future<void> removeLoginInfo() async {
+    await prefs!.remove("oAuthJson");
+    await prefs!.remove("customRootFolderName");
   }
 }

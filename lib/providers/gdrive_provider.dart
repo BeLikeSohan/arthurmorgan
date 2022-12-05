@@ -67,6 +67,14 @@ class GDriveProvider extends ChangeNotifier {
     });
   }
 
+  void logout() {
+    userState = UserState.undetermined;
+    isLoggedIn = false;
+    files = [];
+    fileListFetched = false;
+    notifyListeners();
+  }
+
   get getFiles {
     return files;
   }

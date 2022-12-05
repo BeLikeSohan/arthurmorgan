@@ -53,8 +53,9 @@ class GoogleOAuthManager {
       httpClient: _JsonAcceptingHttpClient(),
       secret: clientSecret,
     );
-    var authorizationUrl = grant.getAuthorizationUrl(redirectUrl,
-        scopes: ["https://www.googleapis.com/auth/drive"]);
+    var authorizationUrl = grant.getAuthorizationUrl(redirectUrl, scopes: [
+      "https://www.googleapis.com/auth/drive",
+    ]);
 
     await redirect(authorizationUrl);
     var responseQueryParameters = await listen();

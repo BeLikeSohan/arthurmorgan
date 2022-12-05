@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'dart:io';
 import 'package:arthurmorgan/enums.dart';
 import 'package:arthurmorgan/functions/filehandler.dart';
+import 'package:arthurmorgan/functions/preferencesmanager.dart';
 import 'package:arthurmorgan/global_data.dart';
 import 'package:arthurmorgan/pages/mainpage/screens/components/taskinfopopup.dart';
 import 'package:arthurmorgan/providers/fileinfosheet_provider.dart';
@@ -104,7 +105,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
         });
   }
 
-  void selectRootFolderDialog(BuildContext context) {
+  void selectRootFolderDialog(BuildContext context) async {
+    if (PreferencesManager.getCustomRootFolderName() != null) {
+      GlobalData.gCustomRootFolder =
+          PreferencesManager.getCustomRootFolderName();
+      Provider.of<GDriveProvider>(context, listen: false).setUserState();
+      return;
+    }
+
     TextEditingController rootFolderController = TextEditingController();
 
     showDialog(
@@ -140,6 +148,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   onPressed: () {
                     if (rootFolderController.text.isNotEmpty) {
                       GlobalData.gCustomRootFolder = rootFolderController.text;
+                      PreferencesManager.setCustomRootFolderName(
+                          rootFolderController.text);
                     }
                     Navigator.pop(context);
                     Provider.of<GDriveProvider>(context, listen: false)

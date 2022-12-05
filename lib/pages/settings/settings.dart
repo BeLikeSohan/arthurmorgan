@@ -1,8 +1,10 @@
 import 'package:arthurmorgan/consts.dart';
+import 'package:arthurmorgan/global_data.dart';
+import 'package:arthurmorgan/providers/auth_provider.dart';
 import 'package:arthurmorgan/providers/settings_provider.dart';
 import 'package:arthurmorgan/widgets/expandable_card.dart';
 import 'package:fluent_ui/fluent_ui.dart';
-import 'package:googleapis/servicemanagement/v1.dart';
+
 import 'package:provider/provider.dart';
 
 class SettingsPage extends StatelessWidget {
@@ -10,6 +12,8 @@ class SettingsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var authProvider = Provider.of<AuthProvider>(context);
+
     return ScaffoldPage.scrollable(
       header: PageHeader(
         title: const Text("Settings"),
@@ -17,33 +21,37 @@ class SettingsPage extends StatelessWidget {
       children: [
         _ThemeModeSection(),
         _WindowStyleSection(),
-        ExpandableCard(
-          header: Text("Account Information"),
-          trailingActions: [
-            Button(
-              child: Text("Logout"),
-              onPressed: () {},
-            )
-          ],
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text("Email: hello.soilcsi@gmail.com"),
-              Text("Identifier: 3203412948uurdcgeutf784")
-            ],
-          ),
-        ),
-        spacer,
-        ExpandableCard(
-          header: Text("Encryption Information"),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text("Algorithm: 256bit AES-CBC"),
-              Text("Key: **********************")
-            ],
-          ),
-        ),
+        authProvider.getIsLoggedIn
+            ? ExpandableCard(
+                header: Text("Account Information"),
+                trailingActions: [
+                  Button(
+                    child: Text("Logout"),
+                    onPressed: () {
+                      authProvider.logout(context);
+                    },
+                  )
+                ],
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                        "Access token: ${authProvider.getClient.credentials.accessToken ?? "null"}")
+                  ],
+                ),
+              )
+            : Container(),
+        // spacer,
+        // ExpandableCard(
+        //   header: Text("Encryption Information"),
+        //   child: Column(
+        //     crossAxisAlignment: CrossAxisAlignment.start,
+        //     children: [
+        //       Text("Algorithm: 256bit AES-CBC"),
+        //       Text("Key: **********************")
+        //     ],
+        //   ),
+        // ),
         spacer,
         ExpandableCard(
           header: Text("Software Information"),

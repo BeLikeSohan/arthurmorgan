@@ -48,6 +48,7 @@ class GDriveManager {
 
   Future<bool> checkIfNewUser() async {
     if (GlobalData.gCustomRootFolder != null) {
+      log("this");
       GlobalData.gCustomRootFolderId =
           await getFolderId(GlobalData.gCustomRootFolder!);
       String? folderId;
@@ -72,14 +73,18 @@ class GDriveManager {
       );
       return data.files!.isEmpty;
     } else {
+      log("that");
       String? folderId;
 
       var files = await driveApi.files.list(
+        q: "'root' in parents",
         $fields: "files(id, name, parents)",
       );
 
       for (var item in files.files!) {
-        if (item.name == "ArthurMorgan" && item.parents!.isEmpty) {
+        log(item.name!);
+        log(item.parents.toString());
+        if (item.name == "ArthurMorgan") {
           folderId = item.id;
           break;
         }
@@ -103,7 +108,7 @@ class GDriveManager {
         ..name = "ArthurMorgan"
         ..mimeType = 'application/vnd.google-apps.folder'
         ..parents = GlobalData.gCustomRootFolder == null
-            ? []
+            ? null
             : [GlobalData.gCustomRootFolderId!]);
 
       final Stream<List<int>> mediaStream =

@@ -35,7 +35,7 @@ class FileHandler {
     final encrypter =
         encrypt.Encrypter(encrypt.AES(key, mode: encrypt.AESMode.cbc));
 
-    return encrypter.encrypt("ArthutMorgan", iv: iv).base64 == verify;
+    return encrypter.encrypt("ArthurMorgan", iv: iv).base64 == verify;
   }
 
   static String createVerifyString(String password) {

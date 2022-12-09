@@ -55,6 +55,8 @@ dependencies:
   path: ^1.8.2
   mime: ^1.0.2
   window_manager: ^0.2.7
+  libmorgan:
+    path: ./libmorgan
   
 dev_dependencies:
   flutter_test:

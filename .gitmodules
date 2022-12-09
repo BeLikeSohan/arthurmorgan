@@ -1,0 +1,3 @@
+[submodule "libmorgan"]
+	path = libmorgan
+	url = https://github.com/belikesohan/libmorgan

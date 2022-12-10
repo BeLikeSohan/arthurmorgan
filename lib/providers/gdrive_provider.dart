@@ -5,6 +5,7 @@ import 'package:arthurmorgan/functions/filehandler.dart';
 import 'package:arthurmorgan/global_data.dart';
 import 'package:arthurmorgan/models/gfile.dart';
 import 'package:flutter/material.dart';
+import 'package:libmorgan/libmorgan.dart';
 
 class GDriveProvider extends ChangeNotifier {
   List<GFile>? files = [];
@@ -30,7 +31,8 @@ class GDriveProvider extends ChangeNotifier {
   }
 
   void setupArthurMorgan(String password) async {
-    var verifyString = FileHandler.createVerifyString(password);
+    GlobalData.gMorgan = Morgan(password, 16);
+    var verifyString = GlobalData.gMorgan!.genVerifyString();
     var result =
         await GlobalData.gDriveManager!.setupArthurMorgan(verifyString);
     if (result) {
@@ -49,18 +51,22 @@ class GDriveProvider extends ChangeNotifier {
     verifyFileMedia.stream.listen((data) {
       verifyFileBytes.insertAll(verifyFileBytes.length, data);
     }, onDone: () {
-      log("Verify DL Done");
-      log(String.fromCharCodes(verifyFileBytes));
-      var result = FileHandler.checkPassword(
-          password, String.fromCharCodes(verifyFileBytes));
-      if (result) {
-        FileHandler.init(password);
-        isLoggedIn = true;
-        notifyListeners();
-      } else {
-        isLoggedIn = false; // why not
-        notifyListeners();
-      }
+      // log("Verify DL Done");
+      // log(String.fromCharCodes(verifyFileBytes));
+      // var result = FileHandler.checkPassword(
+      //     password, String.fromCharCodes(verifyFileBytes));
+      // if (result) {
+      //   //FileHandler.init(password);
+      //   isLoggedIn = true;
+      //   notifyListeners();
+      // } else {
+      //   isLoggedIn = false; // why not
+      //   notifyListeners();
+      // }
+      isLoggedIn =
+          FileHandler.init(password, String.fromCharCodes(verifyFileBytes));
+      log(isLoggedIn.toString());
+      notifyListeners();
     }, onError: (error) {
       log("Verify DL Some Error");
       notifyListeners();

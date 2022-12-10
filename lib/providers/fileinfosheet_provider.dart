@@ -35,11 +35,12 @@ class FileInfoSheetProvider extends ChangeNotifier {
     previewLoadState = PreviewLoadState.loading;
     notifyListeners();
     var stream =
-        await GlobalData.gDriveManager!.downloadFile(currentSelectedFile!);
+        await GlobalData.gDriveManager!.downloadThumbnail(currentSelectedFile!);
     stream.listen((data) {
       encryptedPreviewData.insertAll(encryptedPreviewData.length, data);
     }, onDone: () {
       log("DL Done");
+      File("dump1.hex").writeAsBytesSync(encryptedPreviewData.toList());
       previewData =
           FileHandler.decryptUintList(Uint8List.fromList(encryptedPreviewData));
       previewLoadState = PreviewLoadState.loaded;

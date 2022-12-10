@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:arthurmorgan/enums.dart';
 import 'package:arthurmorgan/functions/filehandler.dart';
 import 'package:arthurmorgan/functions/preferencesmanager.dart';
@@ -7,7 +8,6 @@ import 'package:arthurmorgan/global_data.dart';
 import 'package:arthurmorgan/pages/mainpage/screens/components/taskinfopopup.dart';
 import 'package:arthurmorgan/providers/fileinfosheet_provider.dart';
 import 'package:arthurmorgan/providers/gdrive_provider.dart';
-import 'package:arthurmorgan/providers/taskinfopopup_provider.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:mime/mime.dart';
 import 'package:modal_side_sheet/modal_side_sheet.dart';
@@ -307,29 +307,76 @@ class FileListGrid extends StatelessWidget {
               mainAxisSpacing: 10),
           itemCount: gdriveProvider.getFiles.length,
           itemBuilder: ((context, index) {
-            return Button(
-              onPressed: () {
-                Provider.of<FileInfoSheetProvider>(context, listen: false)
-                    .setCurrentGFile(gdriveProvider.getFiles[index]);
-              },
-              child: Container(
-                margin: const EdgeInsets.all(2),
-                child: Column(
-                  children: [
-                    const Expanded(
-                        child: Icon(
-                      FluentIcons.photo2,
-                      size: 30,
-                    )),
-                    Text(
-                      gdriveProvider.getFiles[index].name,
-                      overflow: TextOverflow.ellipsis,
-                    )
-                  ],
-                ),
-              ),
+            return FileButtonWidget(
+              gdriveProvider: gdriveProvider,
+              index: index,
             );
           })),
+    );
+  }
+}
+
+class FileButtonWidget extends StatefulWidget {
+  FileButtonWidget(
+      {Key? key, required this.gdriveProvider, required this.index})
+      : super(key: key);
+
+  final GDriveProvider gdriveProvider;
+  final int index;
+
+  @override
+  State<FileButtonWidget> createState() => _FileButtonWidgetState();
+}
+
+class _FileButtonWidgetState extends State<FileButtonWidget> {
+  List<int> encryptedPreviewData = [];
+  Uint8List? previewData;
+
+  void loadAndDecryptPreview() async {
+    var stream = await GlobalData.gDriveManager!
+        .downloadThumbnail(widget.gdriveProvider.getFiles[widget.index]);
+    stream.listen((data) {
+      encryptedPreviewData.insertAll(encryptedPreviewData.length, data);
+    }, onDone: () {
+      log("DL Done");
+      File("dump1.hex").writeAsBytesSync(encryptedPreviewData.toList());
+      previewData =
+          FileHandler.decryptUintList(Uint8List.fromList(encryptedPreviewData));
+      setState(() {});
+    }, onError: (error) {
+      log("Some Error");
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    loadAndDecryptPreview();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Button(
+      onPressed: () {
+        Provider.of<FileInfoSheetProvider>(context, listen: false)
+            .setCurrentGFile(widget.gdriveProvider.getFiles[widget.index]);
+      },
+      child: Container(
+        margin: const EdgeInsets.all(2),
+        child: Column(
+          children: [
+            Expanded(
+              child: previewData == null
+                  ? Center(child: ProgressRing())
+                  : Image.memory(previewData!),
+            ),
+            Text(
+              widget.gdriveProvider.getFiles[widget.index].name,
+              overflow: TextOverflow.ellipsis,
+            )
+          ],
+        ),
+      ),
     );
   }
 }

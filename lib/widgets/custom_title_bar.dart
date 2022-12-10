@@ -26,7 +26,7 @@ class CustomTitleBar extends StatelessWidget {
           "Uploading ${file.path.split("\\").last} ($i / ${files.length})");
       var encryptedFile = await FileHandler.encryptFile(file);
       var stream =
-          await FileHandler.getStreamFromFile(encryptedFile.encryptedFile);
+          await FileHandler.getStreamFromFile(encryptedFile!.encryptedFile);
       await GlobalData.gDriveManager!.uploadFile(
           encryptedFile.encryptedName, encryptedFile.length, stream);
       log("done");

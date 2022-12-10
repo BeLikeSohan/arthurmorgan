@@ -164,4 +164,12 @@ class GDriveManager {
         downloadOptions: drive.DownloadOptions.fullMedia) as drive.Media;
     return media.stream;
   }
+
+  Future<Stream> downloadThumbnail(GFile gfile) async {
+    drive.Media media = await driveApi.files.get(gfile.id,
+            downloadOptions:
+                drive.PartialDownloadOptions(drive.ByteRange(0, 65536)))
+        as drive.Media;
+    return media.stream;
+  }
 }

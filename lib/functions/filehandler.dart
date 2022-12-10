@@ -8,44 +8,15 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'dart:typed_data';
 import 'package:encrypt/encrypt.dart' as encrypt;
+import 'package:libmorgan/libmorgan.dart';
+import 'package:mime/mime.dart';
 
 class FileHandler {
-  static FileCryptor? fileCryptor;
-  static encrypt.Encrypter? encrypter;
-  static encrypt.Key? key;
-  static encrypt.IV? iv;
+  static Morgan? _morgan;
 
-  static void init(String password) {
-    fileCryptor = FileCryptor(
-      key: Utils.padPassToKey(password),
-      iv: 16,
-      dir: "example",
-    );
-
-    key = encrypt.Key.fromUtf8(Utils.padPassToKey(password));
-    iv = encrypt.IV.fromLength(16);
-
-    encrypter = encrypt.Encrypter(encrypt.AES(key!, mode: encrypt.AESMode.cbc));
-  }
-
-  static bool checkPassword(String password, String verify) {
-    final key = encrypt.Key.fromUtf8(Utils.padPassToKey(password));
-    final iv = encrypt.IV.fromLength(16);
-
-    final encrypter =
-        encrypt.Encrypter(encrypt.AES(key, mode: encrypt.AESMode.cbc));
-
-    return encrypter.encrypt("ArthutMorgan", iv: iv).base64 == verify;
-  }
-
-  static String createVerifyString(String password) {
-    final key = encrypt.Key.fromUtf8(Utils.padPassToKey(password));
-    final iv = encrypt.IV.fromLength(16);
-
-    final encrypter =
-        encrypt.Encrypter(encrypt.AES(key, mode: encrypt.AESMode.cbc));
-
-    return encrypter.encrypt("ArthutMorgan", iv: iv).base64;
+  static bool init(String password, String verifyString) {
+    _morgan = Morgan(password, 16);
+    return _morgan!.init(verifyString);
   }
 
   static Future<List<File>?> getFile() async {
@@ -67,36 +38,25 @@ class FileHandler {
     return file.openRead();
   }
 
-  static Future<EncryptedFile> encryptFile(File file) async {
-    final encryptedFileName =
-        encrypter!.encrypt(file.path.split("\\").last, iv: iv);
+  static Future<EncryptedFile?> encryptFile(File file) async {
+    String? mimeType = lookupMimeType(file.path);
 
-    // String encryptedFileName = String.fromCharCodes(
-    //     fileCryptor.encryptUint8List(
-    //         data: Uint8List.fromList(file.path
-    //             .split("/")
-    //             .last
-    //             .codeUnits))); // what in the name of fuck is this?
-
-    //String fileName = file.path.split("\\").last;
-    File encryptedFile = await fileCryptor!.encrypt(inputFile: file.path);
-
-    return EncryptedFile(encryptedFileName.base64, encryptedFile.lengthSync(),
-        encryptedFile); // TODO: not sure if using base64 as filename is a good idea. need to find some algorithm which gives small enough output to use as filename;
+    if (mimeType!.startsWith("image")) {
+      String fileName = _morgan!.encryptFileName(file.path.split('\\').last);
+      var imageBytes = _morgan!.packImage(file);
+      File("temp.file").writeAsBytesSync(imageBytes);
+      return EncryptedFile(fileName, imageBytes.length, File("temp.file"));
+    }
   }
 
   static Future<GFile> decryptGfile(GFile gfile) async {
-    var decryptedGfile = GFile(
-        gfile.id,
-        encrypter!.decrypt64(gfile.name, iv: iv),
-        gfile.size,
-        gfile.createdTime);
+    var decryptedGfile = GFile(gfile.id, _morgan!.decryptFileName(gfile.name),
+        gfile.size, gfile.createdTime);
     log(decryptedGfile.name);
     return decryptedGfile;
   }
 
   static Uint8List decryptUintList(Uint8List bytes) {
-    var decryptedBytes = fileCryptor!.decryptUint8List(data: bytes);
-    return decryptedBytes;
+    return Uint8List.fromList(_morgan!.getThumbnail(bytes));
   }
 }

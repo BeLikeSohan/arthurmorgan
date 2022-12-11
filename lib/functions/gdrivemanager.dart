@@ -3,8 +3,13 @@ import 'dart:developer';
 import 'package:arthurmorgan/functions/filehandler.dart';
 import 'package:arthurmorgan/global_data.dart';
 import 'package:arthurmorgan/models/gfile.dart';
+import 'package:arthurmorgan/providers/taskinfopopup_provider.dart';
+import 'package:fluent_ui/fluent_ui.dart';
 import 'package:googleapis/drive/v3.dart' as drive;
+import 'package:googleapis/pubsub/v1.dart';
+import 'package:mime/mime.dart';
 import 'package:oauth2/oauth2.dart';
+import 'package:provider/provider.dart';
 
 class GDriveManager {
   late drive.DriveApi driveApi;
@@ -26,7 +31,11 @@ class GDriveManager {
     for (var item in data.files!) {
       if (item.name == "arthurmorgan") continue;
       var gfile = await FileHandler.decryptGfile(GFile(
-          item.id!, item.name!, int.parse(item.size!), item.createdTime!));
+          item.id!,
+          item.name!,
+          lookupMimeType(item.name!),
+          int.parse(item.size!),
+          item.createdTime!));
       files.add(gfile);
     }
     return files;
@@ -145,9 +154,19 @@ class GDriveManager {
     return verifyFileMedia;
   }
 
-  Future<bool> uploadFile(
-      String fileName, int fileLength, Stream<List<int>> steram) async {
-    var media = drive.Media(steram, fileLength);
+  Future<bool> uploadFile(BuildContext context, String fileName, int fileLength,
+      Stream<List<int>> steram) async {
+    final options = drive.UploadOptions.resumable;
+    var media = drive.Media(
+        steram.chunkRead(
+          chunkSize: options.chunkSize,
+          read: (val) {
+            log("Progress % : ${(val / fileLength) * 100}");
+            Provider.of<TaskInfoPopUpProvider>(context, listen: false)
+                .setProgress((val / fileLength) * 100);
+          },
+        ),
+        fileLength);
 
     var driveFile = drive.File();
     driveFile.name = fileName;
@@ -171,5 +190,28 @@ class GDriveManager {
                 drive.PartialDownloadOptions(drive.ByteRange(0, 65536)))
         as drive.Media;
     return media.stream;
+  }
+}
+
+extension on Stream<List<int>> {
+  /// read: callback to print the progress
+  /// chunkSize: size of the chunk default is 1024 bytes
+  Stream<List<int>> chunkRead(
+      {Function(int read)? read, int chunkSize = 1024}) async* {
+    final buffer = <int>[];
+    var loaded = 0;
+    await for (var data in this) {
+      buffer.addAll(data);
+      for (int i = 0; i < buffer.length; i += chunkSize) {
+        data = buffer.sublist(
+            i, i + chunkSize > buffer.length ? buffer.length : i + chunkSize);
+        loaded += data.length;
+        if (read != null) {
+          read(loaded);
+        }
+        yield data;
+      }
+      buffer.removeRange(0, buffer.length);
+    }
   }
 }

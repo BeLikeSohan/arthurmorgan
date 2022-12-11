@@ -7,6 +7,7 @@ import 'package:arthurmorgan/pages/settings/settings.dart';
 import 'package:arthurmorgan/global_data.dart';
 import 'package:arthurmorgan/pages/mainpage/homepage.dart';
 import 'package:arthurmorgan/providers/auth_provider.dart';
+import 'package:arthurmorgan/providers/encryption_upload_provider.dart';
 import 'package:arthurmorgan/providers/fileinfosheet_provider.dart';
 import 'package:arthurmorgan/providers/gdrive_provider.dart';
 import 'package:arthurmorgan/providers/settings_provider.dart';
@@ -69,6 +70,9 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider.value(
           value: SettingsProvider(),
+        ),
+        ChangeNotifierProvider.value(
+          value: EncryptionUploadProvider(),
         ),
       ],
       child: FluentApp(

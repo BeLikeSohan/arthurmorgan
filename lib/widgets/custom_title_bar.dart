@@ -1,8 +1,10 @@
+import 'dart:async';
 import 'dart:developer';
 import 'dart:io';
 
 import 'package:arthurmorgan/functions/filehandler.dart';
 import 'package:arthurmorgan/global_data.dart';
+import 'package:arthurmorgan/providers/encryption_upload_provider.dart';
 import 'package:arthurmorgan/providers/gdrive_provider.dart';
 import 'package:arthurmorgan/providers/taskinfopopup_provider.dart';
 import 'package:arthurmorgan/windowtitlebar.dart';
@@ -20,22 +22,40 @@ class CustomTitleBar extends StatelessWidget {
     if (files == null) return;
     // showUploadingDialog(context); // ok next time thanks for the warning
 
-    int i = 1;
-    for (File file in files) {
-      Provider.of<TaskInfoPopUpProvider>(context, listen: false).show(
-          "Uploading ${file.path.split("\\").last} ($i / ${files.length})");
-      var encryptedFile = await FileHandler.encryptFile(file);
-      var stream =
-          await FileHandler.getStreamFromFile(encryptedFile!.encryptedFile);
-      await GlobalData.gDriveManager!.uploadFile(
-          encryptedFile.encryptedName, encryptedFile.length, stream);
-      log("done");
-      i++;
-    }
+    var encryptionProvider =
+        Provider.of<EncryptionUploadProvider>(context, listen: false);
+
+    encryptionProvider.uploadFiles(context, files);
+    // int i = 1;
+    //for (File file in files) {
+    // Provider.of<TaskInfoPopUpProvider>(context, listen: false).show(
+    //     "Uploading ${file.path.split("\\").last} ($i / ${files.length})");
+
+    //encryptionProvider.startVideoEncryption(context, file);
+    // var encryptedFile = await FileHandler.encryptFile(file);
+    // if (encryptedFile != null) {
+    //   var stream =
+    //       await FileHandler.getStreamFromFile(encryptedFile!.encryptedFile);
+    //   await GlobalData.gDriveManager!.uploadFile(
+    //       encryptedFile.encryptedName, encryptedFile.length, stream);
+    //   log("done");
+    // }
+    // FileHandler.encryptFile(file);
+    // Timer.periodic(const Duration(seconds: 1), (timer) {
+    //   if (GlobalData.isEncryptionCompleted) {
+    //     log("is encrypting");
+    //     Provider.of<TaskInfoPopUpProvider>(context, listen: false).hide();
+    //     Provider.of<GDriveProvider>(context, listen: false).getFileList();
+    //   } else if (!GlobalData.isEncryptionCompleted &&
+    //       GlobalData.isCurrentlyEncrypting) {
+    //     log("encrypt done");
+    //     timer.cancel();
+    //   }
+    // });
+    // i++;
+    //}
 
     // Navigator.pop(context);
-    Provider.of<TaskInfoPopUpProvider>(context, listen: false).hide();
-    Provider.of<GDriveProvider>(context, listen: false).getFileList();
   }
 
   @override

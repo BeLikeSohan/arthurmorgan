@@ -16,9 +16,11 @@ class TaskInfoPopup extends StatelessWidget {
               title: Text(taskInfoProvider.getTaskTitle),
               content: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
-                  SizedBox(height: 5),
-                  ProgressBar(),
+                children: [
+                  const SizedBox(height: 5),
+                  ProgressBar(
+                    value: taskInfoProvider.progress,
+                  ),
                 ],
               ),
               severity: InfoBarSeverity.info,

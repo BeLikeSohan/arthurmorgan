@@ -5,6 +5,7 @@ import 'package:arthurmorgan/enums.dart';
 import 'package:arthurmorgan/functions/filehandler.dart';
 import 'package:arthurmorgan/global_data.dart';
 import 'package:arthurmorgan/models/gfile.dart';
+import 'package:arthurmorgan/providers/encryption_upload_provider.dart';
 import 'package:arthurmorgan/providers/taskinfopopup_provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -40,7 +41,6 @@ class FileInfoSheetProvider extends ChangeNotifier {
       encryptedPreviewData.insertAll(encryptedPreviewData.length, data);
     }, onDone: () {
       log("DL Done");
-      File("dump1.hex").writeAsBytesSync(encryptedPreviewData.toList());
       previewData =
           FileHandler.decryptUintList(Uint8List.fromList(encryptedPreviewData));
       previewLoadState = PreviewLoadState.loaded;
@@ -52,33 +52,47 @@ class FileInfoSheetProvider extends ChangeNotifier {
   }
 
   void saveToDisk(BuildContext context) async {
-    Provider.of<TaskInfoPopUpProvider>(context, listen: false)
-        .show("Downloading ${currentSelectedFile!.name}");
-    List<int> encryptedData = [];
-    List<int> data = [];
-    var stream =
-        await GlobalData.gDriveManager!.downloadFile(currentSelectedFile!);
-    stream.listen((data) {
-      encryptedData.insertAll(encryptedData.length, data);
-    }, onDone: () {
-      log("Download (Save to disk)");
-      data = FileHandler.decryptUintList(Uint8List.fromList(encryptedData));
+    Provider.of<EncryptionUploadProvider>(context, listen: false)
+        .downloadAndDecrypt(context, currentSelectedFile!);
+    // Provider.of<TaskInfoPopUpProvider>(context, listen: false)
+    //     .show("Downloading ${currentSelectedFile!.name}");
 
-      String docDir = GlobalData.gAppDocDir!.path;
+    // double totalGetLen = 0;
 
-      String savePath = path.join(
-          docDir, "ArthurMorgan", "Downloads", currentSelectedFile!.name);
+    // String docDir = GlobalData.gAppDocDir!.path;
 
-      log(savePath);
+    // String tempPath =
+    //     path.join(docDir, "ArthurMorgan", "Downloads", "temp.jpeg");
 
-      File(savePath).create(recursive: true).then((saveFile) {
-        saveFile.writeAsBytes(data);
-        log("SAVE TO DISK DONE");
-        Provider.of<TaskInfoPopUpProvider>(context, listen: false).hide();
-      });
-    }, onError: (error) {
-      log("Download (Save to disk)");
-    });
+    // File tempFile = File(tempPath);
+
+    // var stream =
+    //     await GlobalData.gDriveManager!.downloadFile(currentSelectedFile!);
+    // stream.listen((data) {
+    //   //encryptedData.insertAll(encryptedData.length, data);
+    //   tempFile.writeAsBytesSync(data, mode: FileMode.append);
+    //   totalGetLen += double.parse(data.length);
+    //   Provider.of<TaskInfoPopUpProvider>(context, listen: false)
+    //       .setProgress((totalGetLen / currentSelectedFile!.size) * 100);
+    // }, onDone: () {
+    //   log("Download (Save to disk)");
+    //   Provider.of<TaskInfoPopUpProvider>(context, listen: false).hide();
+
+    //   String savePath = path.join(
+    //       docDir, "ArthurMorgan", "Downloads", currentSelectedFile!.name);
+
+    //   log(savePath);
+
+    //   //data = FileHandler.decryptUintList(Uint8List.fromList(encryptedData));
+
+    //   // File(savePath).create(recursive: true).then((saveFile) {
+    //   //   //saveFile.writeAsBytes(data);
+    //   //   log("SAVE TO DISK DONE");
+    //   //   Provider.of<TaskInfoPopUpProvider>(context, listen: false).hide();
+    //   // });
+    // }, onError: (error) {
+    //   log("Download (Save to disk) error");
+    // });
   }
 
   get getIsOpen {

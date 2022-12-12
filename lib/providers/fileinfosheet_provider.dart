@@ -52,8 +52,13 @@ class FileInfoSheetProvider extends ChangeNotifier {
   }
 
   void saveToDisk(BuildContext context) async {
-    Provider.of<EncryptionUploadProvider>(context, listen: false)
-        .downloadAndDecrypt(context, currentSelectedFile!);
+    if (currentSelectedFile!.mimeType!.startsWith("video")) {
+      Provider.of<EncryptionUploadProvider>(context, listen: false)
+          .downloadAndDecryptVideo(context, currentSelectedFile!);
+    } else if (currentSelectedFile!.mimeType!.startsWith("image")) {
+      Provider.of<EncryptionUploadProvider>(context, listen: false)
+          .downloadAndDecryptImage(context, currentSelectedFile!);
+    }
     // Provider.of<TaskInfoPopUpProvider>(context, listen: false)
     //     .show("Downloading ${currentSelectedFile!.name}");
 

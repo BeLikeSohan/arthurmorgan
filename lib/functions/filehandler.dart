@@ -38,17 +38,17 @@ class FileHandler {
     return file.openRead();
   }
 
-  static Future<EncryptedFile?> encryptFile(File file) async {
-    String? mimeType = lookupMimeType(file.path);
+  // static Future<EncryptedFile?> encryptFile(File file) async {
+  //   String? mimeType = lookupMimeType(file.path);
 
-    if (mimeType!.startsWith("image")) {
-      String fileName =
-          GlobalData.gMorgan!.encryptFileName(file.path.split('\\').last);
-      var imageBytes = GlobalData.gMorgan!.packImage(file);
-      File("temp.file").writeAsBytesSync(imageBytes);
-      return EncryptedFile(fileName, imageBytes.length, File("temp.file"));
-    }
-  }
+  //   if (mimeType!.startsWith("image")) {
+  //     String fileName =
+  //         GlobalData.gMorgan!.encryptFileName(file.path.split('\\').last);
+  //     var imageBytes = GlobalData.gMorgan!.packImage(file);
+  //     File("temp.file").writeAsBytesSync(imageBytes);
+  //     return EncryptedFile(fileName, imageBytes.length, File("temp.file"));
+  //   }
+  // }
 
   static Future<GFile> decryptGfile(GFile gfile) async {
     var decryptedGfile = GFile(

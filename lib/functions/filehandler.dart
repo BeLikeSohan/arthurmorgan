@@ -57,7 +57,7 @@ class FileHandler {
         lookupMimeType(GlobalData.gMorgan!.decryptFileName(gfile.name)),
         gfile.size,
         gfile.createdTime);
-    log(decryptedGfile.name);
+    GlobalData.logger.d(decryptedGfile.name);
     return decryptedGfile;
   }
 

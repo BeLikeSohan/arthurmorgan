@@ -131,15 +131,15 @@ class _MainWindowState extends State<MainWindow> {
 
   void loadClientFile() async {
     String dir = Directory.current.path;
-    log(dir);
+    GlobalData.logger.d(dir);
     List fileList = Directory(dir).listSync();
 
     String? configFilePath;
 
     for (var file in fileList) {
       if (file.path.endsWith("json")) {
-        log("found json config");
-        log(file.toString());
+        GlobalData.logger.d("found json config");
+        GlobalData.logger.d(file.toString());
         configFilePath = file.path;
       }
     }

@@ -33,12 +33,12 @@ class _FileButtonWidgetState extends State<FileButtonWidget> {
     stream.listen((data) {
       encryptedPreviewData.insertAll(encryptedPreviewData.length, data);
     }, onDone: () {
-      log("DL Done");
+      GlobalData.logger.d("DL Done");
       previewData =
           FileHandler.decryptUintList(Uint8List.fromList(encryptedPreviewData));
       setState(() {});
     }, onError: (error) {
-      log("Some Error");
+      GlobalData.logger.d("Some Error");
     });
   }
 

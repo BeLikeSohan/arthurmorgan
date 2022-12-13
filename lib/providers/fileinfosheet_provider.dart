@@ -40,13 +40,13 @@ class FileInfoSheetProvider extends ChangeNotifier {
     stream.listen((data) {
       encryptedPreviewData.insertAll(encryptedPreviewData.length, data);
     }, onDone: () {
-      log("DL Done");
+      GlobalData.logger.d("DL Done");
       previewData =
           FileHandler.decryptUintList(Uint8List.fromList(encryptedPreviewData));
       previewLoadState = PreviewLoadState.loaded;
       notifyListeners();
     }, onError: (error) {
-      log("Some Error");
+      GlobalData.logger.d("Some Error");
       notifyListeners();
     });
   }
@@ -80,23 +80,23 @@ class FileInfoSheetProvider extends ChangeNotifier {
     //   Provider.of<TaskInfoPopUpProvider>(context, listen: false)
     //       .setProgress((totalGetLen / currentSelectedFile!.size) * 100);
     // }, onDone: () {
-    //   log("Download (Save to disk)");
+    //   GlobalData.logger.d("Download (Save to disk)");
     //   Provider.of<TaskInfoPopUpProvider>(context, listen: false).hide();
 
     //   String savePath = path.join(
     //       docDir, "ArthurMorgan", "Downloads", currentSelectedFile!.name);
 
-    //   log(savePath);
+    //   GlobalData.logger.d(savePath);
 
     //   //data = FileHandler.decryptUintList(Uint8List.fromList(encryptedData));
 
     //   // File(savePath).create(recursive: true).then((saveFile) {
     //   //   //saveFile.writeAsBytes(data);
-    //   //   log("SAVE TO DISK DONE");
+    //   //   GlobalData.logger.d("SAVE TO DISK DONE");
     //   //   Provider.of<TaskInfoPopUpProvider>(context, listen: false).hide();
     //   // });
     // }, onError: (error) {
-    //   log("Download (Save to disk) error");
+    //   GlobalData.logger.d("Download (Save to disk) error");
     // });
   }
 

@@ -94,7 +94,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     if (passwordController.text !=
                             passwordConfirmController.text &&
                         passwordController.text.isEmpty) {
-                      log("password mismatch");
+                      GlobalData.logger.d("password mismatch");
                       return;
                     }
                     Provider.of<GDriveProvider>(context, listen: false)

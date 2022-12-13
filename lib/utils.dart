@@ -15,7 +15,7 @@ class Utils {
               GlobalData.gAppDocDir!.path, "ArthurMorgan", "Temp", "temp.meb"))
           .deleteSync();
     } catch (e) {
-      log(e.toString());
+      GlobalData.logger.d(e.toString());
     }
   }
 }

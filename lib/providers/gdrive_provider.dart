@@ -38,7 +38,7 @@ class GDriveProvider extends ChangeNotifier {
     if (result) {
       userState = UserState.initiated;
     } else {
-      log("error");
+      GlobalData.logger.d("error");
     }
     notifyListeners();
   }
@@ -51,8 +51,8 @@ class GDriveProvider extends ChangeNotifier {
     verifyFileMedia.stream.listen((data) {
       verifyFileBytes.insertAll(verifyFileBytes.length, data);
     }, onDone: () {
-      // log("Verify DL Done");
-      // log(String.fromCharCodes(verifyFileBytes));
+      // GlobalData.logger.d("Verify DL Done");
+      // GlobalData.logger.d(String.fromCharCodes(verifyFileBytes));
       // var result = FileHandler.checkPassword(
       //     password, String.fromCharCodes(verifyFileBytes));
       // if (result) {
@@ -65,10 +65,10 @@ class GDriveProvider extends ChangeNotifier {
       // }
       isLoggedIn =
           FileHandler.init(password, String.fromCharCodes(verifyFileBytes));
-      log(isLoggedIn.toString());
+      GlobalData.logger.d(isLoggedIn.toString());
       notifyListeners();
     }, onError: (error) {
-      log("Verify DL Some Error");
+      GlobalData.logger.d("Verify DL Some Error");
       notifyListeners();
     });
   }

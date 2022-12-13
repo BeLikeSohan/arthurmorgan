@@ -61,7 +61,7 @@ class EncryptionUploadProvider extends ChangeNotifier {
       }
       Provider.of<TaskInfoPopUpProvider>(context, listen: false)
           .setProgress(encryptionProgress);
-      log(encryptionProgress.toString());
+      GlobalData.logger.d(encryptionProgress.toString());
       notifyListeners();
     });
   }
@@ -104,7 +104,7 @@ class EncryptionUploadProvider extends ChangeNotifier {
       }
       Provider.of<TaskInfoPopUpProvider>(context, listen: false)
           .setProgress(encryptionProgress);
-      log(encryptionProgress.toString());
+      GlobalData.logger.d(encryptionProgress.toString());
       notifyListeners();
     });
   }
@@ -147,11 +147,11 @@ class EncryptionUploadProvider extends ChangeNotifier {
     stream.listen((data) {
       tempFile.writeAsBytesSync(data, mode: FileMode.append);
       totalGetLen += data.length;
-      log(totalGetLen.toString());
+      GlobalData.logger.d(totalGetLen.toString());
       Provider.of<TaskInfoPopUpProvider>(context, listen: false)
           .setProgress((totalGetLen / encryptedFile.size) * 100);
     }, onDone: () {
-      log("Download (Save to disk)");
+      GlobalData.logger.d("Download (Save to disk)");
       Provider.of<TaskInfoPopUpProvider>(context, listen: false).hide();
 
       String savePath =
@@ -173,7 +173,7 @@ class EncryptionUploadProvider extends ChangeNotifier {
       });
 
       port.listen((message) {
-        log(message.toString());
+        GlobalData.logger.d(message.toString());
         if (message == "UNPACK_VIDEO_DONE") {
           Provider.of<TaskInfoPopUpProvider>(context, listen: false).hide();
         } else {
@@ -182,7 +182,7 @@ class EncryptionUploadProvider extends ChangeNotifier {
         }
       });
     }, onError: (error) {
-      log("Download (Save to disk) error");
+      GlobalData.logger.d("Download (Save to disk) error");
       Provider.of<TaskInfoPopUpProvider>(context, listen: false).hide();
     });
   }
@@ -206,11 +206,11 @@ class EncryptionUploadProvider extends ChangeNotifier {
     stream.listen((data) {
       tempFile.writeAsBytesSync(data, mode: FileMode.append);
       totalGetLen += data.length;
-      log(totalGetLen.toString());
+      GlobalData.logger.d(totalGetLen.toString());
       Provider.of<TaskInfoPopUpProvider>(context, listen: false)
           .setProgress((totalGetLen / encryptedFile.size) * 100);
     }, onDone: () {
-      log("Download (Save to disk)");
+      GlobalData.logger.d("Download (Save to disk)");
       Provider.of<TaskInfoPopUpProvider>(context, listen: false)
           .show("Decrypting ${encryptedFile.name}");
 
@@ -230,7 +230,7 @@ class EncryptionUploadProvider extends ChangeNotifier {
       });
 
       port.listen((message) {
-        log(message.toString());
+        GlobalData.logger.d(message.toString());
         if (message == "UNPACK_IMAGE_DONE") {
           Provider.of<TaskInfoPopUpProvider>(context, listen: false).hide();
         } else {
@@ -241,7 +241,7 @@ class EncryptionUploadProvider extends ChangeNotifier {
         Provider.of<TaskInfoPopUpProvider>(context, listen: false).hide();
       });
     }, onError: (error) {
-      log("Download (Save to disk) error");
+      GlobalData.logger.d("Download (Save to disk) error");
       Provider.of<TaskInfoPopUpProvider>(context, listen: false).hide();
     });
   }
@@ -252,7 +252,7 @@ class EncryptionUploadProvider extends ChangeNotifier {
 
     Timer.periodic(const Duration(seconds: 1), (timer) {
       if (currentFileIndex == totalFiles) {
-        log("all files done");
+        GlobalData.logger.d("all files done");
         timer.cancel();
       }
 

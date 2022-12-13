@@ -57,7 +57,7 @@ class GDriveManager {
 
   Future<bool> checkIfNewUser() async {
     if (GlobalData.gCustomRootFolder != null) {
-      log("this");
+      GlobalData.logger.d("this");
       GlobalData.gCustomRootFolderId =
           await getFolderId(GlobalData.gCustomRootFolder!);
       String? folderId;
@@ -82,7 +82,7 @@ class GDriveManager {
       );
       return data.files!.isEmpty;
     } else {
-      log("that");
+      GlobalData.logger.d("that");
       String? folderId;
 
       var files = await driveApi.files.list(
@@ -91,8 +91,8 @@ class GDriveManager {
       );
 
       for (var item in files.files!) {
-        log(item.name!);
-        log(item.parents.toString());
+        GlobalData.logger.d(item.name!);
+        GlobalData.logger.d(item.parents.toString());
         if (item.name == "ArthurMorgan") {
           folderId = item.id;
           break;
@@ -127,11 +127,11 @@ class GDriveManager {
       driveFile.name = "arthurmorgan";
       driveFile.parents = [folder.id!];
       final result = await driveApi.files.create(driveFile, uploadMedia: media);
-      log("Upload result: $result");
+      GlobalData.logger.d("Upload result: $result");
       checkIfNewUser(); // calling this here to update the folderId, not good
       return true;
     } catch (e) {
-      log(e.toString());
+      GlobalData.logger.d(e.toString());
       return false;
     }
   }
@@ -161,7 +161,7 @@ class GDriveManager {
         steram.chunkRead(
           chunkSize: options.chunkSize,
           read: (val) {
-            log("Progress % : ${(val / fileLength) * 100}");
+            GlobalData.logger.d("Progress % : ${(val / fileLength) * 100}");
             Provider.of<TaskInfoPopUpProvider>(context, listen: false)
                 .setProgress((val / fileLength) * 100);
           },
@@ -173,7 +173,7 @@ class GDriveManager {
     driveFile.parents = [folderID!];
 
     final response = await driveApi.files.create(driveFile, uploadMedia: media);
-    log("response: ${response.toString()}");
+    GlobalData.logger.d("response: ${response.toString()}");
 
     return true;
   }

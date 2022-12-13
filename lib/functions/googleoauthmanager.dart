@@ -69,7 +69,7 @@ class GoogleOAuthManager {
     var credentials = oauth2.Credentials.fromJson(oauthjson);
     oauth2.Client client =
         oauth2.Client(credentials, identifier: clientID, secret: clientSecret);
-    log(client.credentials.toJson().toString(), name: "TEST");
+    GlobalData.logger.d(client.credentials.toJson().toString());
     return client;
   }
 }

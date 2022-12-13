@@ -17,7 +17,7 @@ class CustomTitleBar extends StatelessWidget {
 
   void uploadFile(BuildContext context) async {
     // TODO: MOVE THIS
-    log("upload start");
+    GlobalData.logger.d("upload start");
     var files = await FileHandler.getFile();
     if (files == null) return;
     // showUploadingDialog(context); // ok next time thanks for the warning
@@ -38,17 +38,17 @@ class CustomTitleBar extends StatelessWidget {
     //       await FileHandler.getStreamFromFile(encryptedFile!.encryptedFile);
     //   await GlobalData.gDriveManager!.uploadFile(
     //       encryptedFile.encryptedName, encryptedFile.length, stream);
-    //   log("done");
+    //   GlobalData.logger.d("done");
     // }
     // FileHandler.encryptFile(file);
     // Timer.periodic(const Duration(seconds: 1), (timer) {
     //   if (GlobalData.isEncryptionCompleted) {
-    //     log("is encrypting");
+    //     GlobalData.logger.d("is encrypting");
     //     Provider.of<TaskInfoPopUpProvider>(context, listen: false).hide();
     //     Provider.of<GDriveProvider>(context, listen: false).getFileList();
     //   } else if (!GlobalData.isEncryptionCompleted &&
     //       GlobalData.isCurrentlyEncrypting) {
-    //     log("encrypt done");
+    //     GlobalData.logger.d("encrypt done");
     //     timer.cancel();
     //   }
     // });

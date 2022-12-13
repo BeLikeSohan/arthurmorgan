@@ -16,11 +16,25 @@ import 'package:arthurmorgan/widgets/custom_title_bar.dart';
 import 'package:arthurmorgan/windowtitlebar.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_acrylic/flutter_acrylic.dart';
+import 'package:logger/logger.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:window_manager/window_manager.dart';
 
+import 'package:path/path.dart' as path;
+
 import 'enums.dart';
+
+class ConsoleOutput extends LogOutput {
+  @override
+  void output(OutputEvent event) {
+    for (var line in event.lines) {
+      print(line);
+      File(GlobalData.currentLogPath!)
+          .writeAsStringSync('$line\n', mode: FileMode.append);
+    }
+  }
+}
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -30,6 +44,17 @@ void main() async {
 
   PreferencesManager.init();
   GlobalData.gAppDocDir = await getApplicationDocumentsDirectory();
+
+  GlobalData.currentLogPath = path.join(
+      GlobalData.gAppDocDir!.path,
+      "ArthurMorgan",
+      "Logs",
+      "${DateTime.now().toString().replaceAll(':', '-')}.log");
+
+  await File(GlobalData.currentLogPath!).create(recursive: true);
+  GlobalData.logger = Logger(output: ConsoleOutput());
+
+  GlobalData.logger.d("Logger is working!");
 
   windowManager.waitUntilReadyToShow().then((_) async {
     await windowManager.setTitleBarStyle(

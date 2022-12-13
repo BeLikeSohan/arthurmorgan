@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:arthurmorgan/functions/gdrivemanager.dart';
 import 'package:libmorgan/libmorgan.dart';
+import 'package:logger/logger.dart';
 import 'package:oauth2/oauth2.dart';
 
 class GlobalData {
@@ -16,4 +17,7 @@ class GlobalData {
 
   static String? gCustomRootFolder;
   static String? gCustomRootFolderId;
+
+  static String? currentLogPath;
+  static late Logger logger;
 }

@@ -57,6 +57,7 @@ dependencies:
   window_manager: ^0.2.7
   libmorgan:
     path: ./libmorgan
+  logger: ^1.1.0
   
 dev_dependencies:
   flutter_test:
